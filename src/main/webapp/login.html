@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/login.css" rel="stylesheet">
+    <style>
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+        .el-footer {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 80px;
+        }
+        .demo-userForm {
+            width: 100%;
+            margin: 0 auto;
+        }
+    </style>
+    <title></title>
+</head>
+
+<!--登录页面-->
+<body>
+<div id="app">
+<el-container>
+    <!--格式header-->
+    <el-header><h3>人力资源管理系统</h3></el-header>
+
+    <!--格式footer-->
+    <el-footer><h1>登录</h1></el-footer>
+
+    <!--格式main-->
+    <el-main>
+        <!--表单-->
+        <el-form :model="user" status-icon :rules="rules" ref="user" label-width="70px" class="demo-userForm">
+            <!--账号-->
+            <el-form-item label="账号" prop="account">
+                <el-input v-model="user.account" placeholder="请输入账号" autocomplete="off"></el-input>
+            </el-form-item>
+            <!--密码-->
+            <el-form-item label="密码" prop="password">
+                <el-input type="password" v-model="user.password" placeholder="请输入密码"
+                          autocomplete="off"></el-input>
+            </el-form-item>
+            <!--登录角色选择-->
+            <el-col :span="12">
+            <el-form-item  style="text-align: left;">
+                <el-switch
+                        v-model="isAdmin"
+                        active-text="管理员"
+                        inactive-text="员工">
+                </el-switch>
+            </el-form-item>
+            </el-col>
+            <!--按钮-->
+            <el-col :span="12">
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('user')">登录</el-button>
+            </el-form-item>
+            </el-col>
+        </el-form>
+    </el-main>
+</el-container>
+</div>
+
+<!--引入axios文件-->
+<script src="js/axios-0.18.0.js"></script>
+<!--引入vue文件-->
+<script src="js/vue.js"></script>
+<!--引入el文件-->
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+
+
+
+<script>
+    new Vue({
+        el:'#app',
+        methods:{
+            //登录
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        //判断登录角色
+                        var url = this.isAdmin ? this.adminUrl : this.userUrl;
+                        axios({
+                            method: "post",
+                            url: url,
+                            data: this.user
+                        }).then(resp => {
+                            var user = resp.data;
+                            if (resp.data==="isFull"){
+                                //session被占用提示信息
+                                this.$message({
+                                    showClose: true,
+                                    message: '该浏览器已登录账号',
+                                    type: 'error'
+                                });
+                                return;
+                            }
+                            //判断是否登录成功
+                            if (user != null && user.id!=null) {
+                                if (this.isAdmin){
+                                    //管理员登录
+                                    location.href="http://localhost:8080/manage/aEmployeeInformation.html";
+                                }else {
+                                    //判断是否是离职用户
+                                    if (user.isJob==="离职"){
+                                        this.$message({
+                                            showClose: true,
+                                            message: '您已离职',
+                                            type: 'error'
+                                        });
+                                        return;
+                                    }
+                                    location.href="http://localhost:8080/manage/uNoticeInformation.html";
+                                }
+                            }else {
+                                //登录失败提示信息
+                                this.$message({
+                                    showClose: true,
+                                    message: '账号或密码错误',
+                                    type: 'error'
+                                });
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            }
+        },
+        data() {
+            //检查账号
+            var checkAccount = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('账号不能为空'));
+                }
+                if (!/^\d{8}$/.test(value)) {
+                    return callback(new Error('账号必须是8位纯数字'));
+                }
+                callback();
+            };
+            //检查密码
+            var checkPassword = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('密码不能为空'));
+                }
+                if (!/^\w{8}$/.test(value)) {
+                    return callback(new Error('密码必须是8位数字或字母'));
+                }
+                callback();
+            };
+            return {
+                //用户模型
+                user: {
+                    id:'',
+                    name: '',
+                    account: '',
+                    password: '',
+                    isJob:'',
+                },
+                //登录角色
+                isAdmin: false,
+                // 管理员登录URL
+                adminUrl: "http://localhost:8080/manage/admin/login",
+                // 普通用户登录URL
+                userUrl: "http://localhost:8080/manage/user/login",
+                //登录验证
+                rules: {
+                    account: [
+                        { validator: checkAccount, trigger: 'blur' }
+                    ],
+                    password: [
+                        { validator: checkPassword, trigger: 'blur' }
+                    ]
+                }
+            };
+        }
+
+    })
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--接口全限定名-->
+<mapper namespace="com.turing.mapper.SalaryMapper" >
+
+    <!--映射设置(表名和类名不一致时)-->
+    <resultMap id="salaryResultMap" type="salary">
+        <result column="user_id" property="userId"/>
+        <result column="basic_salary" property="basicSalary"/>
+        <result column="late_time" property="lateTime"/>
+        <result column="leave_early_time" property="leaveEarlyTime"/>
+        <result column="absence_time" property="absenceTime"/>
+        <result column="leave_time" property="leaveTime"/>
+    </resultMap>
+
+</mapper>

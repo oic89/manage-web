@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            margin: 0 auto;
+            width: 178px;
+            height: 178px;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+            border-radius: 50%;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+        }
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+
+<body>
+<div id="app">
+        <el-container style="height: 500px; border: 1px solid #eee">
+            <!--格式header-->
+            <el-header style="text-align: right; font-size: 16px;">
+                <span style="float: left; font-size: 20px; font-weight: bold;">员工</span>
+                <el-dropdown style="margin-right: 15px;">
+                    <i class="el-icon-setting" style="font-weight: bold; font-size: 14px"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="modifyOpen">修改<i class="el-icon-edit"></i></el-dropdown-item>
+                        <el-dropdown-item  style="color:lightcoral" @click.native="logOut">退出<i class="el-icon-right"></i></el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span style="font-size: 16px; font-weight: bold; display: inline-block; vertical-align: middle;">{{ userData.name }}</span>
+                <img :src="userData.face" style="width: 40px; height: 40px; border-radius: 50%; vertical-align: -15px; margin-left: 10px;"  alt="">
+
+
+            </el-header>
+
+            <el-container>
+                <!--格式aside-->
+                <el-aside width="200px" style="background-color: rgb(238, 241, 246); text-align: center;">
+                    <!--文字链接-->
+                    <br>
+                    <el-link href="http://localhost:8080/manage/uNoticeInformation.html" target="_self"><h1>公告查看</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/uSalaryInformation.html" target="_self"><h1>薪资查询</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/uWorkInformation.html" target="_self"><h1>出勤信息</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/uLeaveInformation.html" target="_self"><h1>请假离职</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/uActivityInformation.html" target="_self"><h1>培训活动</h1></el-link>
+                    <br><br>
+                </el-aside>
+
+                <!--格式main-->
+                <el-main>
+                    <!--表格-->
+                    <template>
+                        <el-table
+                                :data="tableData"
+                                stripe
+                                style="width: 100%;">
+                            <!--序号-->
+                            <el-table-column
+                                    align="right"
+                                    type="index">
+                            </el-table-column>
+                            <!--月份-->
+                            <el-table-column
+                                    prop="date"
+                                    align="center"
+                                    label="月份">
+                            </el-table-column>
+                            <!--基础薪资-->
+                            <el-table-column
+                                    prop="basicSalary"
+                                    align="center"
+                                    label="基础薪资">
+                            </el-table-column>
+                            <!--迟到次数-->
+                            <el-table-column
+                                    prop="lateTime"
+                                    align="center"
+                                    label="迟到次数">
+                            </el-table-column>
+                            <!--早退次数-->
+                            <el-table-column
+                                    prop="leaveEarlyTime"
+                                    align="center"
+                                    label="早退次数">
+                            </el-table-column>
+                            <!--缺勤次数-->
+                            <el-table-column
+                                    prop="absenceTime"
+                                    align="center"
+                                    label="缺勤次数">
+                            </el-table-column>
+                            <!--请假次数-->
+                            <el-table-column
+                                    prop="leaveTime"
+                                    align="center"
+                                    label="请假次数">
+                            </el-table-column>
+                            <!--本月薪资-->
+                            <el-table-column
+                                    align="center"
+                                    label="本月薪资">
+                                <template v-slot="scope">
+                                    <h4>{{ scope.row.salary }}</h4>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+
+                    <!--分页-->
+                    <!--本页条数/当前页码/当前页码/每页条数/每页条数/-->
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
+
+                </el-main>
+            </el-container>
+        </el-container>
+
+    <!--修改信息提示框-->
+    <el-dialog
+            title="修改账号信息"
+            :visible.sync="showModifyMessage"
+            width="35%">
+        <!--正文-->
+        <span>
+            <template>
+                 <el-form :model="ruleModifyForm" status-icon :rules="modifyRules" ref="ruleModifyForm" label-width="100px"
+                          class="demo-ruleForm">
+                     <!--修改信息显示的表单项-->
+                     <el-upload
+                             class="avatar-uploader"
+                             :show-file-list="false"
+                             :on-success="handleAvatarSuccess"
+                             :before-upload="beforeAvatarUpload"
+                             action="http://localhost:8080/manage/upload/uploadFace"
+                             v-if="!ruleModifyForm.switch">
+                             <img v-if="ruleModifyForm.face" :src="ruleModifyForm.face" class="avatar" alt="">
+                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                     </el-upload>
+                     <br>
+                     <!--姓名-->
+                     <el-form-item label="姓名" prop="name" v-if="!ruleModifyForm.switch">
+                         <el-input v-model="ruleModifyForm.name"></el-input>
+                     </el-form-item>
+                     <!--性别-->
+                     <el-form-item label="性别" v-if="!ruleModifyForm.switch">
+                         <el-select v-model="ruleModifyForm.sex" value="" >
+                             <el-option label="男" value="男"></el-option>
+                             <el-option label="女" value="女"></el-option>
+                         </el-select>
+                     </el-form-item>
+
+                     <!-- 修改密码显示的表单项 -->
+                     <!--原密码-->
+                     <el-form-item label="原密码" prop="pass" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--新密码-->
+                     <el-form-item label="新密码" prop="password" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--确认密码-->
+                     <el-form-item label="确认密码" prop="checkPassword" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--按钮-->
+                     <el-form-item>
+                         <el-button type="primary" @click="submitModifyForm('ruleModifyForm')">提交</el-button>
+                         <el-button @click="showModifyMessage=false">取消</el-button>
+                     </el-form-item>
+                     <!-- 开关，控制显示哪些表单项 -->
+                     <el-form-item style="text-align: left;">
+                         <el-switch
+                                 v-model="ruleModifyForm.switch"
+                                 active-text="修改密码"
+                                 inactive-text="修改资料">
+                         </el-switch>
+                     </el-form-item>
+                 </el-form>
+            </template>
+        </span>
+    </el-dialog>
+
+</div>
+
+<!--引入axios文件-->
+<script src="js/axios-0.18.0.js"></script>
+<!--引入vue文件-->
+<script src="js/vue.js"></script>
+<!--引入el文件-->
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+
+
+<script>
+
+
+    new Vue({
+        el: '#app',
+        mounted() {
+            this.loadData()
+            this.selectAll();
+        },
+        methods: {
+            //查询分页数据
+            selectAll() {
+                axios({
+                    method: "Get",
+                    url: "http://localhost:8080/manage/salary/selectByPageAndCondition?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                }).then(resp => {
+                    this.tableData = resp.data.rows;
+                    this.totalCount = resp.data.totalCount;
+                })
+            },
+            //更新本页条数
+            handleSizeChange(val) {
+                this.pageSize=val;
+                this.selectAll();
+            },
+            //更新当前页码
+            handleCurrentChange(val) {
+                this.currentPage=val;
+                this.selectAll();
+            },
+            //打开修改表单
+            modifyOpen(){
+                this.ruleModifyForm.account='';
+                this.ruleModifyForm.checkPassword='';
+                this.ruleModifyForm.password='';
+                this.ruleModifyForm.pass='';
+                this.ruleModifyForm.name=this.userData.name;
+                this.ruleModifyForm.sex=this.userData.sex;
+                this.ruleModifyForm.face=this.userData.face;
+                this.showModifyMessage=true;
+            },
+            //提交修改表单
+            submitModifyForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        if (!this.ruleModifyForm.switch){
+                            if (this.ruleModifyForm.face!=="img/male.png"&&this.ruleModifyForm.face!=="img/female.png"){
+                                this.ruleModifyForm.face="null";
+                            }
+                            //信息修改
+                            axios({
+                                method: "post",
+                                url: "http://localhost:8080/manage/user/updateUser",
+                                data: this.ruleModifyForm
+                            }).then(resp => {
+                                if (resp.data === "success") {
+                                    this.showModifyMessage=false;
+                                    this.$message({
+                                        type: 'success',
+                                        message: '修改成功!'
+                                    });
+                                    this.loadData();
+                                    this.selectAll();
+                                    location.reload();
+                                    return;
+                                }
+                                this.$message({
+                                    showClose: true,
+                                    message: '账号已存在',
+                                    type: 'error'
+                                });
+                            })
+                            return;
+                        }
+                        //密码修改
+                        this.ruleModifyForm.account=this.ruleModifyForm.pass
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/manage/user/modifyPassword",
+                            data: this.ruleModifyForm
+                        }).then(resp => {
+                            if (resp.data === "success") {
+                                this.showModifyMessage=false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功!'
+                                });
+                                return;
+                            }
+                            this.$message({
+                                showClose: true,
+                                message: '原密码错误',
+                                type: 'error'
+                            });
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //退出按钮
+            logOut() {
+                this.$confirm('确认退出？','提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/manage/user/loadOut",
+                        data: ''
+                    }).then(resp => {
+                        if (resp.data === "success") {
+                            this.$message({
+                                type: 'success',
+                                message: '退出成功!'
+                            });
+                            setTimeout(() => {
+                                location.href="http://localhost:8080/manage/login.html";
+                            }, 500);
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消退出'
+                    });
+                });
+            },
+            //加载数据
+            loadData(){
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/manage/user/loadData",
+                    data:''
+                }).then(resp => {
+                    this.userData=resp.data;
+                })
+            },
+            //修改头像展示
+            handleAvatarSuccess(res, file) {
+                this.ruleModifyForm.face = URL.createObjectURL(file.raw);
+            },
+            //上传头像验证
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            }
+        }, data() {
+            //修改密码
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (!/^[0-9a-zA-Z]{8}$/.test(value)) {
+                        callback(new Error('密码必须是8位数字或字母'));
+                    }
+                    callback();
+                }
+            };
+            //姓名验证
+            var validateName = (rule, value, callback) => {
+                const pattern = /^[a-zA-Z\u4e00-\u9fa5]{1,8}$/;
+                if (!value) {
+                    return callback(new Error('姓名不能为空'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('姓名必须是8位以内的汉字或字母'));
+                } else {
+                    callback();
+                }
+            };
+            //修改验证密码验证
+            var validateCheckPassword = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleModifyForm.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            //修改密码验证
+            var validatePassword = (rule, value, callback) => {
+                const pattern = /^[0-9a-zA-Z]{8}$/;
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('密码必须是8位数字或字母'));
+                } else {
+                    if (this.ruleModifyForm.checkPassword !== '') {
+                        this.$refs.ruleModifyForm.validateField('checkPassword');
+                    }
+                    callback();
+                }
+            };
+            return{
+                //修改信息表单/
+                showModifyMessage:false,
+                //修改表单模型/
+                ruleModifyForm: {
+                    account:'',
+                    switch: false,
+                    face:'',
+                    name:'',
+                    sex:'',
+                    pass: '',
+                    password: '',
+                    checkPassword: '',
+                },
+                //修改表单验证
+                modifyRules: {
+                    name: [{ validator: validateName, trigger: 'blur' }],
+                    pass: [{ validator: validatePass, trigger: 'blur' }],
+                    password: [{ validator: validatePassword, trigger: 'blur' }],
+                    checkPassword: [{ validator: validateCheckPassword, trigger: 'blur' }],
+                },
+                //表格模型
+                tableData: {
+                    salary: '',
+                    basicSalary: '',
+                    lateTime:'',
+                    leaveEarlyTime:'',
+                    absenceTime:'',
+                    leaveTime:'',
+                    date:'',
+                },
+                //当前页码
+                currentPage: 1,
+                //用户模型
+                userData: {
+                    face:'',
+                    id:'',
+                    name:'',
+                    sex:'',
+                    account:''
+                },
+                //总记录数
+                totalCount:0,
+                //每页显示条数
+                pageSize:5,
+            }
+        },
+    })
+
+
+
+</script>
+</body>
+</html>

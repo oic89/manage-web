@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--接口全限定名-->
+<mapper namespace="com.turing.mapper.LeaveMapper" >
+
+    <!--映射设置(表名和类名不一致时)-->
+    <resultMap id="leaveResultMap" type="leave">
+        <result column="user_id" property="userId"/>
+        <result column="start_date" property="startDate"/>
+        <result column="last_date" property="lastDate"/>
+    </resultMap>
+
+    <!--分页条件查询请假信息-->
+    <select id="selectByPageAndCondition" resultMap="leaveResultMap">
+        select * from tb_leave
+        where state='请假同意'
+
+        <if test="leave.name!=null and leave.name!='' ">
+            and name like #{leave.name}
+        </if>
+
+        <if test="leave.reason!=null and leave.reason!=''">
+            and reason like #{leave.reason}
+        </if>
+
+        <if test="leave.startDate!=null and leave.startDate!=''">
+            and (start_date like #{leave.startDate} or last_date like #{leave.lastDate})
+        </if>
+
+        limit #{begin},#{size}
+    </select>
+
+    <!--条件查询请假总页数-->
+    <select id="selectTotalCountAndCondition" resultType="int" >
+        select count(*) from tb_leave
+        where state='请假同意'
+
+        <if test="name!=null and name!='' ">
+            and name like #{name}
+        </if>
+
+        <if test="reason!=null and reason!=''">
+            and reason like #{reason}
+        </if>
+
+        <if test="startDate!=null and startDate!=''">
+            and (start_date like #{startDate} or last_date like #{lastDate})
+        </if>
+    </select>
+
+    <!--分页条件查询登录用户请假信息-->
+    <select id="selectByPageAndCondition1" resultMap="leaveResultMap">
+        select * from tb_leave
+        where state='请假同意' and user_id=#{leave.userId}
+
+        <if test="leave.reason!=null and leave.reason!=''">
+            and reason like #{leave.reason}
+        </if>
+
+        <if test="leave.startDate!=null and leave.startDate!=''">
+            and (start_date like #{leave.startDate} or last_date like #{leave.lastDate})
+        </if>
+
+        limit #{begin},#{size}
+    </select>
+
+    <!--条件查询登录用户请假总页数-->
+    <select id="selectTotalCountAndCondition1" resultType="int" >
+        select count(*) from tb_leave
+        where state='请假同意' and user_id=#{userId}
+
+        <if test="reason!=null and reason!=''">
+            and reason like #{reason}
+        </if>
+
+        <if test="startDate!=null and startDate!=''">
+            and (start_date like #{startDate} or last_date like #{lastDate})
+        </if>
+    </select>
+
+    <!--查看登录用户的请假申请-->
+    <select id="selectApplyLeaveByUserId" resultMap="leaveResultMap">
+        select * from tb_leave
+        where user_id = #{userId}
+
+        <choose>
+            <when test="state == '请假'">
+                and(state = '请假申请' or state = '请假拒绝')
+            </when>
+            <when test="state == '离职'">
+                and state = '离职申请'
+            </when>
+        </choose>
+    </select>
+</mapper>

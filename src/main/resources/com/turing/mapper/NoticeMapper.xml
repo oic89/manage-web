@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--接口全限定名-->
+<mapper namespace="com.turing.mapper.NoticeMapper" >
+
+
+    <!--分页条件查询置顶公告-->
+    <select id="selectByPageAndCondition1" resultType="com.turing.pojo.Notice">
+        select * from tb_notice
+        where state='置顶'
+
+        <if test="notice.title!=null and notice.title!='' ">
+            and ( title like #{notice.title}
+        </if>
+
+        <if test="notice.text!=null and notice.text!='' ">
+            or text like #{notice.text} )
+        </if>
+
+        <if test="notice.date!=null and notice.date!=''">
+            and date like #{notice.date}
+        </if>
+        limit #{begin},#{size}
+    </select>
+
+    <!--分页条件查询普通公告-->
+    <select id="selectByPageAndCondition2" resultType="com.turing.pojo.Notice">
+        select * from tb_notice
+        where state='普通'
+
+        <if test="notice.title!=null and notice.title!='' ">
+            and ( title like #{notice.title}
+        </if>
+
+        <if test="notice.text!=null and notice.text!='' ">
+            or text like #{notice.text} )
+        </if>
+
+        <if test="notice.date!=null and notice.date!=''">
+            and date like #{notice.date}
+        </if>
+
+        limit #{begin},#{size}
+    </select>
+
+    <!--条件查询公告总页数-->
+    <select id="selectTotalCountAndCondition" resultType="int">
+        select count(*) from tb_notice
+        where 1=1
+
+        <if test="state=='普通' or state=='置顶'">
+            and state = #{state}
+        </if>
+
+        <if test="title!=null and title!='' ">
+            and (title like #{title}
+        </if>
+
+        <if test="text!=null and text!='' ">
+            or text like #{text} )
+        </if>
+
+        <if test="date!=null and date!=''">
+            and date like #{date}
+        </if>
+    </select>
+
+
+</mapper>

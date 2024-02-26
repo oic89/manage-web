@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--接口全限定名-->
+<mapper namespace="com.turing.mapper.WorkMapper" >
+    <!--映射设置(表名和类名不一致时)-->
+    <resultMap id="workResultMap" type="work">
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <!--分页条件查询在职用户出勤信息-->
+    <select id="selectByPageAndCondition" resultMap="workResultMap">
+        select * from tb_work
+        <where>
+            <if test="work.name!=null and work.name!='' ">
+                and name like #{work.name}
+            </if>
+
+            <if test="work.date!=null and work.date!=''">
+                and date like #{work.date}
+            </if>
+
+            <if test="work.type!=null and work.type!=''">
+                and type=#{work.type}
+            </if>
+        </where>
+        limit #{begin},#{size}
+    </select>
+
+    <!--条件查询在职用户出勤信息总页数-->
+    <select id="selectTotalCountAndCondition" resultType="int" >
+        select count(*) from tb_work
+
+        <where>
+        <if test="name!=null and name!='' ">
+            and name like #{name}
+        </if>
+
+        <if test="date!=null and date!=''">
+            and date like #{date}
+        </if>
+
+        <if test="type!=null and type!=''">
+            and type=#{type}
+        </if>
+        </where>
+    </select>
+
+    <!--分页条件查询登录用户出勤信息-->
+    <select id="selectByPageAndCondition1" resultMap="workResultMap">
+        select * from tb_work
+        where user_id=#{work.userId}
+
+        <if test="work.date!=null and work.date!=''">
+            and date like #{work.date}
+        </if>
+
+        <if test="work.type!=null and work.type!=''">
+            and type=#{work.type}
+        </if>
+        limit #{begin},#{size}
+    </select>
+
+    <!--条件查询登录用户出勤总页数-->
+    <select id="selectTotalCountAndCondition1" resultType="int" >
+        select count(*) from tb_work
+        where user_id=#{userId}
+
+
+            <if test="date!=null and date!=''">
+                and date like #{date}
+            </if>
+
+            <if test="type!=null and type!=''">
+                and type=#{type}
+            </if>
+    </select>
+
+</mapper>

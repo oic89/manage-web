@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            color: #333;
+        }
+    </style>
+</head>
+
+<!--员工信息管理-->
+<body>
+<div id="app">
+        <el-container style="height: 500px; border: 1px solid #eee">
+            <!--格式header-->
+            <el-header style="text-align: right; font-size: 16px;">
+                <span style="float: left; font-size: 20px; font-weight: bold;">管理员</span>
+                <el-dropdown style="margin-right: 15px;">
+                    <i class="el-icon-setting" style="font-weight: bold; font-size: 14px"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="modifyOpen">修改<i class="el-icon-edit"></i></el-dropdown-item>
+                        <el-dropdown-item @click.native="registerOpen">注册<i class="el-icon-user"></i></el-dropdown-item>
+                        <el-dropdown-item @click.native="logOut">退出<i class="el-icon-right"></i></el-dropdown-item>
+                        <el-dropdown-item style="color:lightcoral" @click.native="logOffOpen">注销<i class="el-icon-delete"></i></el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span style="font-size: 16px; font-weight: bold;">{{adminData.name}}</span>
+            </el-header>
+
+            <el-container>
+                <!--格式aside-->
+                <el-aside width="200px" style="background-color: rgb(238, 241, 246); text-align: center;">
+                    <!--文字链接-->
+                    <br>
+                    <el-link href="http://localhost:8080/manage/aEmployeeInformation.html" target="_self"><h1>员工信息管理</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/aWorkInformation.html" target="_self"><h1>员工出勤管理</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/aLeaveInformation.html" target="_self"><h1>请假离职管理</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/aNoticeInformation.html" target="_self"><h1>公告信息管理</h1></el-link>
+                    <br><br>
+                    <el-link href="http://localhost:8080/manage/aActivityInformation.html" target="_self"><h1>培训信息管理</h1></el-link>
+                    <br><br>
+                </el-aside>
+
+                <!--格式main-->
+                <el-main>
+                    <!--搜索表单-->
+                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                        <!--姓名-->
+                        <el-form-item label="姓名">
+                            <el-input v-model="formInline.name" placeholder="姓名" size="default"></el-input>
+                        </el-form-item>
+                        <!--日期-->
+                        <el-form-item label="日期">
+                            <el-input v-model.number="formInline.date" placeholder="日期" size="default" maxlength="10"></el-input>
+                        </el-form-item>
+                        <!--类型-->
+                        <el-form-item label="类型">
+                            <el-select v-model="formInline.sex" placeholder="类型" value="" style="width:140px" size="default" >
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="迟到" value="迟到"></el-option>
+                                <el-option label="早退" value="早退"></el-option>
+                                <el-option label="缺勤" value="缺勤"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <!--查询按钮-->
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit" size="default">查询</el-button>
+                            <el-button type="success" @click="newOpen" size="default">新增</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                    <!--表格-->
+                    <template>
+                        <el-table
+                                :data="tableData"
+                                stripe
+                                style="width: 100%">
+                            <!--序号-->
+                            <el-table-column
+                                    align="right"
+                                    type="index">
+                            </el-table-column>
+                            <!--头像-->
+                            <el-table-column
+                                    prop="face"
+                                    align="right">
+                                <template v-slot="scope">
+                                    <img :src="scope.row.face" alt="头像" style="width: 50px; height: 50px; border-radius: 50%;">
+                                </template>
+                            </el-table-column>
+                            <!--姓名-->
+                            <el-table-column
+                                    prop="name"
+                                    align="center"
+                                    label="姓名">
+                            </el-table-column>
+                            <!--性别-->
+                            <el-table-column
+                                    prop="sex"
+                                    align="center"
+                                    label="性别">
+                            </el-table-column>
+                            <!--账号-->
+                            <el-table-column
+                                prop="account"
+                                align="center"
+                                label="账号">
+                            </el-table-column>
+                            <!--类型-->
+                            <el-table-column
+                                    prop="type"
+                                    align="center"
+                                    label="类型">
+                            </el-table-column>
+                            <!--日期-->
+                            <el-table-column
+                                    prop="date"
+                                    align="center"
+                                    label="日期">
+                            </el-table-column>
+                            !--修改按钮-->
+                            <el-table-column
+                                    align="center">
+                                <template v-slot="scope">
+                                    <el-link icon="el-icon-edit" @click="workOpen(scope.row.id)"><h4>修改</h4></el-link>
+                                    <el-link type="danger" @click="handleDelete(scope.row.id)"><h4>删除<i class="el-icon-delete"></i></h4></el-link>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+
+                    <!--分页-->
+                    <!--本页条数/当前页码/当前页码/每页条数/每页条数/-->
+                    <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="5"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalCount">
+                    </el-pagination>
+
+                </el-main>
+            </el-container>
+        </el-container>
+
+    <!--注册提示框-->
+    <el-dialog
+            title="注册"
+            :visible.sync="showRegisterMessage"
+            width="35%">
+        <!--正文-->
+        <span>
+            <template>
+            <!--注册角色选择-->
+            <el-radio-group v-model="isAdmin" style="margin-bottom: 20px;">
+                <el-radio :label="true">注册管理员</el-radio>
+                <el-radio :label="false">注册员工</el-radio>
+            </el-radio-group>
+            <el-form :model="ruleRegisterForm" status-icon :rules="registerRules" ref="ruleRegisterForm" label-width="100px"
+                     class="demo-ruleForm">
+                <!--账号-->
+                <el-form-item label="账号" prop="account">
+                    <el-input v-model="ruleRegisterForm.account" :maxlength="8"></el-input>
+                </el-form-item>
+                <!--姓名-->
+                <el-form-item label="姓名" prop="name">
+                    <el-input v-model="ruleRegisterForm.name" :maxlength="8"></el-input>
+                </el-form-item>
+                <!--密码-->
+                <el-form-item label="密码" prop="password">
+                    <el-input type="password" v-model="ruleRegisterForm.password" :maxlength="8"></el-input>
+                </el-form-item>
+                <!--验证密码-->
+                <el-form-item label="确认密码" prop="checkPassword">
+                    <el-input type="password" v-model="ruleRegisterForm.checkPassword"></el-input>
+                </el-form-item>
+                <!--性别-->
+                <el-form-item v-if="!isAdmin" label="性别" prop="sex">
+                    <el-radio-group v-model="ruleRegisterForm.sex">
+                        <el-radio label="男"></el-radio>
+                        <el-radio label="女"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <!--基础工资-->
+                <el-form-item v-if="!isAdmin" label="基础工资" prop="basicSalary">
+                    <el-input v-model.number="ruleRegisterForm.basicSalary" maxlength="7"></el-input>
+                </el-form-item>
+                <!--验证码-->
+                <el-form-item label="验证码" prop="checkCode">
+                <div style="display: flex;">
+                    <el-input v-model="ruleRegisterForm.checkCode" :maxlength="4"></el-input>
+                    <!--验证码图片-->
+                    <img :src="checkCodeSrc" @click="refreshCheckCode" style="cursor: pointer; margin-left: 10px;">
+                </div>
+                </el-form-item>
+                <!--提交按钮-->
+                <el-form-item>
+                    <el-button type="primary" @click="submitRegisterForm('ruleRegisterForm')" style="margin-left: 60px;">提交</el-button>
+                    <el-button @click="showRegisterMessage=false">取消   </el-button>
+                </el-form-item>
+            </el-form>
+            </template>
+        </span>
+    </el-dialog>
+
+    <!--注销提示框-->
+    <el-dialog
+            title="注销账号"
+            :visible.sync="showLogOffMessage"
+            width="35%">
+        <!--正文-->
+        <span>
+            <template>
+                <el-form :model="ruleLogOffForm" status-icon :rules="logOffRules" ref="ruleLogOffForm" label-width="100px" class="demo-ruleForm">
+                   <!--密码-->
+                   <el-form-item label="密码" prop="pass">
+                       <el-input type="password" v-model="ruleLogOffForm.pass" autocomplete="off"></el-input>
+                   </el-form-item>
+                   <!--提交按钮-->
+                   <el-form-item>
+                       <el-button type="primary" @click="submitLogOffForm('ruleLogOffForm')">提交</el-button>
+                       <el-button @click="showLogOffMessage=false">取消</el-button>
+                   </el-form-item>
+                </el-form>
+            </template>
+        </span>
+    </el-dialog>
+
+    <!--修改信息提示框-->
+    <el-dialog
+            title="修改账号信息"
+            :visible.sync="showModifyMessage"
+            width="35%">
+        <!--正文-->
+        <span>
+            <template>
+                 <el-form :model="ruleModifyForm" status-icon :rules="modifyRules" ref="ruleModifyForm" label-width="100px"
+                          class="demo-ruleForm">
+                     <!--修改信息显示的表单项-->
+                     <!--账号-->
+                     <el-form-item label="账号" prop="account" v-if="!ruleModifyForm.switch">
+                         <el-input v-model="ruleModifyForm.account"></el-input>
+                     </el-form-item>
+                     <!--姓名-->
+                     <el-form-item label="姓名" prop="name" v-if="!ruleModifyForm.switch">
+                         <el-input v-model="ruleModifyForm.name"></el-input>
+                     </el-form-item>
+
+                     <!-- 修改密码显示的表单项 -->
+                     <!--原密码-->
+                     <el-form-item label="原密码" prop="pass" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--新密码-->
+                     <el-form-item label="新密码" prop="password" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--确认密码-->
+                     <el-form-item label="确认密码" prop="checkPassword" v-if="ruleModifyForm.switch">
+                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off"></el-input>
+                     </el-form-item>
+                     <!--按钮-->
+                     <el-form-item>
+                         <el-button type="primary" @click="submitModifyForm('ruleModifyForm')">提交</el-button>
+                         <el-button @click="showModifyMessage=false">取消</el-button>
+                     </el-form-item>
+                     <!-- 开关，控制显示哪些表单项 -->
+                     <el-form-item style="text-align: left;">
+                         <el-switch
+                                 v-model="ruleModifyForm.switch"
+                                 active-text="修改密码"
+                                 inactive-text="修改资料">
+                         </el-switch>
+                     </el-form-item>
+                 </el-form>
+            </template>
+        </span>
+    </el-dialog>
+
+    <!--修改出勤信息-->
+    <el-dialog
+            title="修改出勤信息"
+            :visible.sync="showWorkMessage"
+            width="30%">
+        <span>
+            <el-form :model="workData" status-icon :rules="workRules" ref="workData" label-width="100px"
+                     class="demo-ruleForm">
+                <el-form-item label="类型">
+                    <el-select v-model="workData.type" value="">
+                        <el-option label="迟到" value="迟到"></el-option>
+                        <el-option label="早退" value="早退"></el-option>
+                        <el-option label="缺勤" value="缺勤"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="选择日期" prop="date">
+                    <el-date-picker
+                            v-model="workData.date"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择日期"
+                            :picker-options="pickerOptions"
+                            style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item>
+                       <el-button type="primary" @click="submitWorkForm('workData')">提交</el-button>
+                       <el-button @click="showWorkMessage=false">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </span>
+    </el-dialog>
+
+    <!--新增出勤信息-->
+    <el-dialog
+            title="新增出勤信息"
+            :visible.sync="showNewMessage"
+            width="35%">
+        <span>
+             <el-form :model="workData" status-icon :rules="addWorkRules" ref="workData" label-width="100px" class="demo-ruleForm">
+             <el-form-item label="员工账号" prop="account">
+                    <el-input v-model="workData.account" :maxlength="8"></el-input>
+                </el-form-item>
+             <el-form-item label="类型">
+                <el-select v-model="workData.type" label="迟到" value="迟到">
+                    <el-option label="迟到" value="迟到"></el-option>
+                    <el-option label="早退" value="早退"></el-option>
+                    <el-option label="缺勤" value="缺勤"></el-option>
+                </el-select>
+             </el-form-item>
+                 <el-form-item label="日期" prop="date">
+                    <el-date-picker
+                            v-model="workData.date"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择日期"
+                            :picker-options="pickerOptions"
+                            style="width: 100%;">
+                    </el-date-picker>
+                </el-form-item>
+             <el-form-item>
+                <el-button type="primary" @click="submitNewForm('workData')">提交</el-button>
+                <el-button @click="showNewMessage=false">取消</el-button>
+             </el-form-item>
+             </el-form>
+
+
+        </span>
+    </el-dialog>
+
+</div>
+
+<!--引入axios文件-->
+<script src="js/axios-0.18.0.js"></script>
+<!--引入vue文件-->
+<script src="js/vue.js"></script>
+<!--引入el文件-->
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+
+
+<script>
+
+
+    new Vue({
+        el: '#app',
+        mounted() {
+            this.loadData();
+            this.selectAll();
+        },
+        methods: {
+            //提交新增出勤表单
+            submitNewForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/manage/work/addWork",
+                            data: this.workData
+                        }).then(resp => {
+                            if (resp.data === "success") {
+                                this.showNewMessage = false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '新增成功!'
+                                });
+                                this.selectAll();
+                                return;
+                            }
+                            this.$message({
+                                showClose: true,
+                                message: '账号不存在',
+                                type: 'error'
+                            });
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //提交修改出勤表单
+            submitWorkForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        //信息修改
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/manage/work/updateWork",
+                            data: this.workData
+                        }).then(resp => {
+                            if (resp.data === "success") {
+                                this.showWorkMessage = false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功!'
+                                });
+                                this.selectAll();
+                            }
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //删除出勤信息
+            handleDelete(id) {
+                this.workData.id=id;
+                this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/manage/work/deleteWork",
+                        data:this.workData
+                    }).then(resp => {
+                        var result = resp.data;
+                        if (result==="success"){
+                            this.selectAll();
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //查询分页数据
+            selectAll() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/manage/work/selectByPageAndCondition?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data: this.formInline
+                }).then(resp => {
+                    this.tableData = resp.data.rows;
+                    this.totalCount = resp.data.totalCount;
+                })
+            },
+            //更新本页条数
+            handleSizeChange(val) {
+                this.pageSize=val;
+                this.selectAll();
+            },
+            //更新当前页码
+            handleCurrentChange(val) {
+                this.currentPage=val;
+                this.selectAll();
+            },
+            //提交搜索表单
+            onSubmit() {
+                this.selectAll();
+            },
+            //打开修改表单
+            modifyOpen(){
+                this.ruleModifyForm.checkPassword='';
+                this.ruleModifyForm.password='';
+                this.ruleModifyForm.pass='';
+                this.ruleModifyForm.name=this.adminData.name;
+                this.ruleModifyForm.account=this.adminData.account;
+                this.showModifyMessage=true;
+            },
+            //提交修改表单
+            submitModifyForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        if (!this.ruleModifyForm.switch){
+                            //信息修改
+                            axios({
+                                method: "post",
+                                url: "http://localhost:8080/manage/admin/modifyInformation",
+                                data: this.ruleModifyForm
+                            }).then(resp => {
+                                if (resp.data === "success") {
+                                    this.showModifyMessage=false;
+                                    this.$message({
+                                        type: 'success',
+                                        message: '修改成功!'
+                                    });
+                                    this.loadData();
+                                    return;
+                                }
+                                this.$message({
+                                    showClose: true,
+                                    message: '账号已存在',
+                                    type: 'error'
+                                });
+                            })
+                            return;
+                        }
+                        //密码修改
+                        this.ruleModifyForm.account=this.ruleModifyForm.pass
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/manage/admin/modifyPassword",
+                            data: this.ruleModifyForm
+                        }).then(resp => {
+                            if (resp.data === "success") {
+                                this.showModifyMessage=false;
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功!'
+                                });
+                                return;
+                            }
+                            this.$message({
+                                showClose: true,
+                                message: '原密码错误',
+                                type: 'error'
+                            });
+                        })
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //提交注销表单
+            submitLogOffForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$confirm('确认注销账号？该操作将永久删除该账号数据','提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            axios({
+                                method: "post",
+                                url: "http://localhost:8080/manage/admin/logOff",
+                                data: this.ruleLogOffForm
+                            }).then(resp => {
+                                if (resp.data === "success") {
+                                    this.showLogOffMessage=false;
+                                    this.$message({
+                                        type: 'success',
+                                        message: '注销成功!'
+                                    });
+                                    setTimeout(() => {
+                                        location.reload();
+                                        location.href = "http://localhost:8080/manage/login.html";
+                                    }, 500);
+                                    return;
+                                }
+                                this.$message({
+                                    showClose: true,
+                                    message: '密码错误',
+                                    type: 'error'
+                                });
+                            })
+                        }).catch(() => {
+                            this.$message({
+                                type: 'info',
+                                message: '已取消注销'
+                            });
+                        });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //退出按钮
+            logOut() {
+                this.$confirm('确认退出？','提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/manage/admin/loadOut",
+                        data: ''
+                    }).then(resp => {
+                        if (resp.data === "success") {
+                            this.$message({
+                                type: 'success',
+                                message: '退出成功!'
+                            });
+                            setTimeout(() => {
+                                location.href="http://localhost:8080/manage/login.html";
+                                location.reload();
+                            }, 500);
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消退出'
+                    });
+                });
+            },
+            //加载数据
+            loadData(){
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/manage/admin/loadData",
+                    data:''
+                }).then(resp => {
+                    this.adminData=resp.data;
+                })
+            },
+            //提交注册表单
+            submitRegisterForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        // 验证验证码
+                        axios.post('/manage/checkCode/code', {
+                            checkCode: this.ruleRegisterForm.checkCode
+                        }).then(response => {
+                            if (response.data !== "success") {
+                                //验证码错误
+                                this.$message({
+                                    showClose: true,
+                                    message: '验证码错误',
+                                    type: 'error'
+                                });
+                                // 刷新验证码
+                                this.refreshCheckCode();
+                                return;
+                            }
+                            //验证码正确
+                            if (this.isAdmin) {
+                                //管理员注册
+                                axios({
+                                    method: "post",
+                                    url: "http://localhost:8080/manage/admin/addAdmin",
+                                    data: this.ruleRegisterForm
+                                }).then(resp => {
+                                    var result = resp.data;
+                                    if (result === "success") {
+                                        this.$message({
+                                            showClose: true,
+                                            message: '注册成功',
+                                            type: 'success'
+                                        });
+                                        this.showRegisterMessage=false;
+                                        return;
+                                    }
+                                    this.$message({
+                                        showClose: true,
+                                        message: '账号已存在,请重新注册',
+                                        type: 'error'
+                                    });
+                                })
+                                return;
+                            }
+                            //员工注册
+                            axios({
+                                method: "post",
+                                url: "http://localhost:8080/manage/user/addUser",
+                                data: this.ruleRegisterForm
+                            }).then(resp => {
+                                var result = resp.data;
+                                if (result === "success") {
+                                    this.$message({
+                                        showClose: true,
+                                        message: '注册成功',
+                                        type: 'success'
+                                    });
+                                    this.selectAll();
+                                    this.showRegisterMessage=false;
+                                    return;
+                                }
+                                this.$message({
+                                    showClose: true,
+                                    message: '账号已存在,请重新注册',
+                                    type: 'error'
+                                });
+                            })
+                        }).catch(error => {
+                            console.error('验证码验证失败:', error);
+                        });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //打开新增出勤信息表单
+            newOpen(){
+                this.workData.account='';
+                this.workData.type='迟到';
+                this.showNewMessage=true;
+            },
+            //刷新验证码
+            refreshCheckCode() {
+                //添加时间戳以避免缓存
+                this.checkCodeSrc = this.checkCodeSrc + '?timestamp=' + new Date().getTime();
+            },
+            //打开注册表单
+            registerOpen(){
+                this.ruleRegisterForm.account = "";
+                this.ruleRegisterForm.password="";
+                this.ruleRegisterForm.checkPassword = "";
+                this.ruleRegisterForm.name = "";
+                this.ruleRegisterForm.sex = "男";
+                this.ruleRegisterForm.basicSalary = "";
+                this.ruleRegisterForm.checkCode = "";
+                this.refreshCheckCode();
+                this.showRegisterMessage = true;
+            },
+            //打开注销表单
+            logOffOpen(){
+                this.ruleLogOffForm.pass = '';
+                this.showLogOffMessage = true;
+            },
+            //打开修改用户信息表单
+            workOpen(id) {
+                const tableData = this.tableData.find(p => p.id === id);
+                if (tableData) {
+                    // 将信息赋值给workData对象
+                    this.workData = {...tableData};
+                }
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth() + 1;
+                //分割输入的日期字符串
+                const parts = this.workData.date.split('-');
+                const Year = parseInt(parts[0], 10);
+                const Month = parseInt(parts[1], 10);
+                //判断是否为本月数据
+                if (currentYear !== Year || currentMonth !== Month) {
+                    this.$message({
+                        showClose: true,
+                        message: '修改时间已过，无法修改',
+                        type: 'error'
+                    });
+                    return;
+                }
+                this.showWorkMessage = true;
+            },
+        }, data() {
+            //注销密码
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (!/^[0-9a-zA-Z]{8}$/.test(value)) {
+                        callback(new Error('密码必须是8位数字或字母'));
+                    }
+                    callback();
+                }
+            };
+            //账号验证
+            var validateAccount = (rule, value, callback) => {
+                const pattern = /^[0-9]{8}$/;
+                if (!value) {
+                    return callback(new Error('账号不能为空'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('账号必须是8位纯数字'));
+                } else {
+                    callback();
+                }
+            };
+            //密码验证
+            var validatePassword = (rule, value, callback) => {
+                const pattern = /^[0-9a-zA-Z]{8}$/;
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('密码必须是8位数字或字母'));
+                } else {
+                    if (this.ruleRegisterForm.checkPassword !== '') {
+                        this.$refs.ruleRegisterForm.validateField('checkPassword');
+                    }
+                    callback();
+                }
+            };
+            //姓名验证
+            var validateName = (rule, value, callback) => {
+                const pattern = /^[a-zA-Z\u4e00-\u9fa5]{1,8}$/;
+                if (!value) {
+                    return callback(new Error('姓名不能为空'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('姓名必须是8位以内的汉字或字母'));
+                } else {
+                    callback();
+                }
+            };
+            //验证密码验证
+            var validateCheckPassword = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleRegisterForm.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            //基础工资验证
+            var validateBasicSalary = (rule, value, callback) => {
+                    if (!value) {
+                        return callback(new Error('基础工资不能为空'));
+                    } else if (!Number.isInteger(value) || value < 1 || value > 1000000) {
+                        callback(new Error('基础工资不合法'));
+                    } else {
+                        callback();
+                    }
+            };
+            //修改验证密码验证
+            var validateCheckPassword2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleModifyForm.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            //修改密码验证
+            var validatePassword2 = (rule, value, callback) => {
+                const pattern = /^[0-9a-zA-Z]{8}$/;
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else if (!pattern.test(value)) {
+                    callback(new Error('密码必须是8位数字或字母'));
+                } else {
+                    if (this.ruleModifyForm.checkPassword !== '') {
+                        this.$refs.ruleModifyForm.validateField('checkPassword');
+                    }
+                    callback();
+                }
+            };
+            return{
+                //注销表单模型
+                ruleLogOffForm: {
+                    pass: ''
+                },
+                //注销表单
+                showLogOffMessage:false,
+                //注销信息验证
+                logOffRules: {
+                    pass: [
+                        { validator: validatePass, trigger: 'blur' }
+                    ]
+                },
+                //管理员信息
+                adminData:{
+                    name:'',
+                    account:''
+                },
+                //是否为管理员
+                isAdmin: true,
+                //注册表单模型
+                ruleRegisterForm: {
+                    account: '',
+                    password: '',
+                    checkPassword: '',
+                    name: '',
+                    sex: '男',
+                    basicSalary: '',
+                    checkCode: ''
+                },
+                //验证码地址
+                checkCodeSrc:"http://localhost:8080/manage/checkCode/checkCodeImg",
+                //注册表单验证
+                registerRules: {
+                    account: [
+                        { validator: validateAccount, trigger: 'blur' } ],
+                    password: [
+                        { validator: validatePassword, trigger: 'blur' }
+                    ],
+                    checkPassword: [
+                        { validator: validateCheckPassword, trigger: 'blur' }
+                    ],
+                    name: [
+                        { validator: validateName, trigger: 'blur' }
+                    ],
+                    sex: [
+                        { required: false, message: '请选择性别', trigger: 'change' }
+                    ],
+                    basicSalary: [
+                        { validator: validateBasicSalary, trigger: 'blur' }
+                    ],
+                    checkCode: [
+                        { required: true, message: '请输入验证码', trigger: 'blur' },
+                        { min: 4, max: 4, message: '验证码必须是4位', trigger: 'blur' }
+                    ]
+                },
+                //注册信息表单
+                showRegisterMessage: false,
+                //修改信息表单
+                showModifyMessage:false,
+                //修改出勤表单
+                showWorkMessage:false,
+                //新增出勤表单
+                showNewMessage:false,
+                //修改表单模型
+                ruleModifyForm: {
+                    switch: false,
+                    name:"",
+                    account: '',
+                    pass: '',
+                    password: '',
+                    checkPassword: '',
+                },
+                //修改表单验证
+                modifyRules: {
+                    name: [{ validator: validateName, trigger: 'blur' }],
+                    account: [{ validator: validateAccount, trigger: 'blur' }],
+                    pass: [{ validator: validatePass, trigger: 'blur' }],
+                    password: [{ validator: validatePassword2, trigger: 'blur' }],
+                    checkPassword: [{ validator: validateCheckPassword2, trigger: 'blur' }],
+                },
+                //表格模型
+                tableData: {
+                    face: '',
+                    name: '',
+                    sex:'',
+                    date:'',
+                    account:'',
+                    type:'',
+                },
+                //搜索表单
+                formInline: {
+                    date: '',
+                    name: '',
+                    type:'',
+                },
+                //当前页码
+                currentPage: 1,
+                //出勤模型
+                workData: {
+                    account:'',
+                    id:'',
+                    type: '',
+                    date: ''
+                },
+                //出勤模型验证
+                workRules: {
+                    date: [
+                        { required: true, message: '请选择日期', trigger: 'change' },
+                        { pattern: /^\d{4}-\d{2}-\d{2}$/, message: '请输入正确的日期格式', trigger: 'blur' }
+                    ]
+                },
+                //新增出勤模型验证
+                addWorkRules:{
+                    account: { validator: validateAccount, trigger: 'blur' } ,
+                    date: [
+                        { required: true, message: '请选择日期', trigger: 'change' },
+                        { pattern: /^\d{4}-\d{2}-\d{2}$/, message: '请输入正确的日期格式', trigger: 'blur' }
+                    ]
+                },
+                //总记录数
+                totalCount:0,
+                //每页显示条数
+                pageSize:5,
+                //出勤时间验证
+                pickerOptions: {
+                    disabledDate: disabledDate
+                },
+            }
+        },
+    })
+    //出勤时间验证
+    function disabledDate(time){
+        const today = new Date();
+        const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        return time.getTime() > today.getTime() || time.getTime() < currentMonthStart.getTime() || time.getTime() > currentMonthEnd.getTime();
+    }
+
+
+
+</script>
+</body>
+</html>
