@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class SalaryServiceImpl implements SalaryService {
         //调用mapper
         //当前页数据
         List<Salary> rows = mapper.selectByPageAndCondition(begin,size,salary);
+        Collections.reverse(rows);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(salary);
         PageBean<Salary> pageBean = new PageBean<>();

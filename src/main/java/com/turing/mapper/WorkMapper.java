@@ -8,13 +8,13 @@ import java.util.List;
 public interface WorkMapper {
 
     //分页条件查询在职用户出勤信息
-    List<Work> selectByPageAndCondition(@Param("begin") int begin, @Param("size") int size, @Param("work") Work work);
+    List<Work> selectByPageAndCondition(Work work);
 
     //条件查询在职用户出勤信息总页数
     int selectTotalCountAndCondition(Work work);
 
     //分页条件查询登录用户出勤信息
-    List<Work> selectByPageAndCondition1(@Param("begin") int begin, @Param("size") int size, @Param("work") Work work);
+    List<Work> selectByPageAndCondition1(Work work);
 
     //条件查询登录用户出勤信息总页数
     int selectTotalCountAndCondition1(Work work);
