@@ -19,8 +19,8 @@ public interface UserMapper {
     User selectUserByAccount(User user);
 
     //添加用户
-    @Insert("insert into tb_user(id,account,name,sex,password,late_time,leave_early_time,absence_time,leave_time,basic_salary,is_job,face) " +
-            "values (null,#{account},#{name},#{sex},#{password},#{lateTime},#{leaveEarlyTime},#{absenceTime},#{leaveTime},#{basicSalary},#{isJob},#{face})")
+    @Insert("insert into tb_user(id,account,name,sex,password,basic_salary,is_job,face) " +
+            "values (null,#{account},#{name},#{sex},#{password},#{basicSalary},#{isJob},#{face})")
     @ResultMap("userResultMap")
     void insertUser(User user);
 

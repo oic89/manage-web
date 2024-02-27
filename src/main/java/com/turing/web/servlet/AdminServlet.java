@@ -100,6 +100,10 @@ public class AdminServlet extends BaseServlet{
             //调用Service
             String result=adminService.logOffAdmin(admin);
             //返回结果
+            if ("success".equals(result)){
+                //删除session
+                session.invalidate();
+            }
             response.getWriter().write(result);
             return;
         }
