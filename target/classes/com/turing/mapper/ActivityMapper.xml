@@ -25,19 +25,18 @@
         select * from tb_activity
         <where>
 
-            <if test="activity.activityName!=null and activity.activityName!='' ">
-                and name like #{activity.activityName}
+            <if test="activityName!=null and activityName!='' ">
+                and name like #{activityName}
             </if>
 
-            <if test="activity.date!=null and activity.date!='' ">
-                and date like #{activity.date}
+            <if test="date!=null and date!='' ">
+                and date like #{date}
             </if>
 
-            <if test="activity.state!=null and activity.state!=''">
-                and state =#{activity.state}
+            <if test="state!=null and state!=''">
+                and state =#{state}
             </if>
         </where>
-        limit #{begin},#{size}
     </select>
 
     <!--条件查询活动总页数-->

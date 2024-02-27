@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ActivityMapper {
     //分页条件查询活动
-    List<Activity> selectByPageAndCondition(@Param("begin") int begin, @Param("size") int size, @Param("activity") Activity activity);
+    List<Activity> selectByPageAndCondition(Activity activity);
 
     //条件查询活动总页数
     int selectTotalCountAndCondition(Activity activity);
