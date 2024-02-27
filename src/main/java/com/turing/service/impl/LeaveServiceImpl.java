@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,25 +42,13 @@ public class LeaveServiceImpl implements LeaveService {
             leave.setLastDate("%" + startDate + "%");
         }
         //调用mapper
-        List<Leave> rows = mapper.selectByPageAndCondition(begin, size, leave);
-        if (rows != null) {
-            int n = rows.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(rows.get(j).getStartDate());
-                    LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getStartDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Leave temp = rows.get(j);
-                        rows.set(j, rows.get(j + 1));
-                        rows.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Leave> rows = mapper.selectByPageAndCondition(leave);
+        List<Leave> rows1 = sortRows(rows);
+        List<Leave> rows2 = selectRows(begin,size,rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(leave);
         PageBean<Leave> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows2);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -87,25 +76,13 @@ public class LeaveServiceImpl implements LeaveService {
             leave.setLastDate("%" + startDate + "%");
         }
         //调用mapper
-        List<Leave> rows = mapper.selectByPageAndCondition1(begin, size, leave);
-        if (rows != null) {
-            int n = rows.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(rows.get(j).getStartDate());
-                    LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getStartDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Leave temp = rows.get(j);
-                        rows.set(j, rows.get(j + 1));
-                        rows.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Leave> rows = mapper.selectByPageAndCondition1(leave);
+        List<Leave> rows1 = sortRows(rows);
+        List<Leave> rows2 = selectRows(begin,size,rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition1(leave);
         PageBean<Leave> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows2);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -152,23 +129,10 @@ public class LeaveServiceImpl implements LeaveService {
         LeaveMapper mapper = sqlSession.getMapper(LeaveMapper.class);
         //调用mapper
         List<Leave> leaves = mapper.selectApplyLeave(leave);
-        if (leaves!=null){
-            int n = leaves.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(leaves.get(j).getStartDate());
-                    LocalDate localDate2 = LocalDate.parse(leaves.get(j + 1).getStartDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Leave temp = leaves.get(j);
-                        leaves.set(j, leaves.get(j + 1));
-                        leaves.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Leave> rows = sortRows(leaves);
         // 释放资源
         sqlSession.close();
-        return leaves;
+        return rows;
     }
 
     //查看登录用户的请假/离职申请
@@ -180,23 +144,10 @@ public class LeaveServiceImpl implements LeaveService {
         LeaveMapper mapper = sqlSession.getMapper(LeaveMapper.class);
         //调用mapper
         List<Leave> leaves = mapper.selectApplyLeaveByUserId(leave);
-        if (leaves!=null){
-            int n = leaves.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(leaves.get(j).getStartDate());
-                    LocalDate localDate2 = LocalDate.parse(leaves.get(j + 1).getStartDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Leave temp = leaves.get(j);
-                        leaves.set(j, leaves.get(j + 1));
-                        leaves.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Leave> rows = sortRows(leaves);
         // 释放资源
         sqlSession.close();
-        return leaves;
+        return rows;
     }
 
     //同意请假
@@ -305,5 +256,34 @@ public class LeaveServiceImpl implements LeaveService {
         sqlSession.commit();
         // 释放资源
         sqlSession.close();
+    }
+
+    //按日期排序
+    private List<Leave> sortRows(List<Leave> rows){
+        int n = rows.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                LocalDate localDate1 = LocalDate.parse(rows.get(j).getStartDate());
+                LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getStartDate());
+                if (localDate1.isBefore(localDate2)) {
+                    Leave temp = rows.get(j);
+                    rows.set(j,rows.get(j + 1));
+                    rows.set(j + 1, temp);
+                }
+            }
+        }
+        return rows;
+    }
+
+    //取出查询页码数据
+    private List<Leave> selectRows(int begin, int size, List<Leave> rows) {
+        List<Leave> rows1 = new ArrayList<>();
+        for (int i = begin; i < begin + size; i++) {
+            if (!(i < rows.size())) {
+                break;
+            }
+            rows1.add(rows.get(i));
+        }
+        return rows1;
     }
 }
