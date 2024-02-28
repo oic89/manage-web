@@ -130,9 +130,15 @@
                         </el-table>
                     </template>
 
-                    <!--总条数-->
+                    <!--分页-->
+                    <!--本页条数/当前页码/当前页码/每页条数/每页条数/-->
                     <el-pagination
-                            layout="total"
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="[5, 10, 15, 20]"
+                            :page-size="pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
                             :total="totalCount">
                     </el-pagination>
 
@@ -947,7 +953,7 @@
                 //总记录数
                 totalCount:0,
                 //每页显示条数
-                pageSize:10000
+                pageSize:5
             }
         },
     })

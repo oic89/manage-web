@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface NoticeMapper {
     //分页条件查询置顶公告
-    List<Notice> selectByPageAndCondition1(@Param("begin") int begin, @Param("size") int size, @Param("notice") Notice notice);
+    List<Notice> selectByPageAndCondition1(Notice notice);
 
     //分页条件查询普通公告
-    List<Notice> selectByPageAndCondition2(@Param("begin") int begin, @Param("size") int size, @Param("notice") Notice notice);
+    List<Notice> selectByPageAndCondition2(Notice notice);
 
     //条件查询公告
     int selectTotalCountAndCondition(Notice notice);

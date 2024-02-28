@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class SalaryServiceImpl implements SalaryService {
         //调用mapper
         //当前页数据
         List<Salary> rows = mapper.selectByPageAndCondition(begin,size,salary);
+        Collections.reverse(rows);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(salary);
         PageBean<Salary> pageBean = new PageBean<>();
@@ -136,11 +138,11 @@ public class SalaryServiceImpl implements SalaryService {
             //计算工资
             //全勤奖500，请假一天不算，请假两天50%，三天没有全勤奖
             //迟到、早退两次算请假一天，迟到早退一次扣10
-            //缺勤一次扣50
+            //缺勤一次扣50，缺勤没有全勤奖
             int salary=user.getBasicSalary()-(leaveEarlyTime+lateTime)*10-absenceTime*50;
-            if (leaveTime+(leaveEarlyTime+lateTime)/2<1){
+            if (leaveTime+(leaveEarlyTime+lateTime)/2<1&&absenceTime==0){
                 salary+=500;
-            }else if (leaveTime+(leaveEarlyTime+lateTime)/2==2){
+            }else if (leaveTime+(leaveEarlyTime+lateTime)/2==2&&absenceTime==0){
                 salary+=250;
             }
             //封装salary

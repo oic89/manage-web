@@ -2,15 +2,14 @@ package com.turing.service.impl;
 
 import com.turing.mapper.UserMapper;
 import com.turing.mapper.WorkMapper;
-import com.turing.pojo.PageBean;
-import com.turing.pojo.User;
-import com.turing.pojo.Work;
+import com.turing.pojo.*;
 import com.turing.service.WorkService;
 import com.turing.util.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WorkServiceImpl implements WorkService {
@@ -40,25 +39,13 @@ public class WorkServiceImpl implements WorkService {
         }
         //调用mapper
         //当前页数据
-        List<Work> rows = mapper.selectByPageAndCondition(begin,size,work);
-        if (rows!=null){
-            int n = rows.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
-                    LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Work temp = rows.get(j);
-                        rows.set(j, rows.get(j + 1));
-                        rows.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Work> rows = mapper.selectByPageAndCondition(work);
+        List<Work> rows1 = sortRows(rows);
+        List<Work> rows2 = selectRows(begin,size,rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(work);
         PageBean<Work> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows2);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -83,25 +70,13 @@ public class WorkServiceImpl implements WorkService {
         }
         //调用mapper
         //当前页数据
-        List<Work> rows = mapper.selectByPageAndCondition1(begin,size,work);
-        if (rows!=null){
-            int n = rows.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
-                    LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Work temp = rows.get(j);
-                        rows.set(j, rows.get(j + 1));
-                        rows.set(j + 1, temp);
-                    }
-                }
-            }
-        }
+        List<Work> rows = mapper.selectByPageAndCondition1(work);
+        List<Work> rows1 = sortRows(rows);
+        List<Work> rows2 = selectRows(begin,size,rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition1(work);
         PageBean<Work> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows2);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -165,5 +140,34 @@ public class WorkServiceImpl implements WorkService {
         // 释放资源
         sqlSession.close();
         return "success";
+    }
+
+    //将公告信息排列
+    private List<Work> sortRows(List<Work> rows){
+        int n = rows.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
+                LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
+                if (localDate1.isBefore(localDate2)) {
+                    Work temp = rows.get(j);
+                    rows.set(j, rows.get(j + 1));
+                    rows.set(j + 1, temp);
+                }
+            }
+        }
+        return rows;
+    }
+
+    //取出查询页码数据
+    private List<Work> selectRows(int begin, int size, List<Work> rows) {
+        List<Work> rows1 = new ArrayList<>();
+        for (int i = begin; i < begin + size; i++) {
+            if (!(i < rows.size())) {
+                break;
+            }
+            rows1.add(rows.get(i));
+        }
+        return rows1;
     }
 }

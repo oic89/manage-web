@@ -95,11 +95,11 @@
                     <el-form :inline="true" :model="formInline" class="demo-form-inline">
                         <!--日期-->
                         <el-form-item label="日期">
-                            <el-input v-model.number="formInline.date" placeholder="日期" size="default" maxlength="10"></el-input>
+                            <el-input v-model="formInline.date" placeholder="日期" size="default" maxlength="10"></el-input>
                         </el-form-item>
                         <!--类型-->
                         <el-form-item label="类型">
-                            <el-select v-model="formInline.sex" placeholder="类型" value="" style="width:140px" size="default" >
+                            <el-select v-model="formInline.type" placeholder="类型" value="" style="width:140px" size="default" >
                                 <el-option label="全部" value=""></el-option>
                                 <el-option label="迟到" value="迟到"></el-option>
                                 <el-option label="早退" value="早退"></el-option>

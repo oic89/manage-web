@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface LeaveMapper {
     //分页条件查询在职用户请假信息
-    List<Leave> selectByPageAndCondition(@Param("begin") int begin, @Param("size") int size, @Param("leave") Leave leave);
+    List<Leave> selectByPageAndCondition(Leave leave);
 
     //条件查询在职用户请假信息总页数
     int selectTotalCountAndCondition(Leave leave);
 
     //分页条件查询登录用户请假信息
-    List<Leave> selectByPageAndCondition1(@Param("begin") int begin, @Param("size") int size, @Param("leave") Leave leave);
+    List<Leave> selectByPageAndCondition1(Leave leave);
 
     //条件查询登录用户请假信息总页数
     int selectTotalCountAndCondition1(Leave leave);

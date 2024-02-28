@@ -1,6 +1,7 @@
 package com.turing.service.impl;
 
 import com.turing.mapper.NoticeMapper;
+import com.turing.pojo.Leave;
 import com.turing.pojo.Notice;
 import com.turing.pojo.PageBean;
 import com.turing.service.NoticeService;
@@ -39,49 +40,28 @@ public class NoticeServiceImpl implements NoticeService {
         //调用mapper
         //当前页数据
         String state = notice.getState();
-        List<Notice> rows1;
-        List<Notice> rows2;
         List<Notice> rows =new ArrayList<>();
         if (state.isEmpty()||"置顶".equals(state)){
-            rows1= mapper.selectByPageAndCondition1(begin,size,notice);
-            if (rows1!=null){
-                int n = rows1.size();
-                for (int i = 0; i < n-1; i++) {
-                    for (int j = 0; j < n-i-1; j++) {
-                        LocalDate localDate1 = LocalDate.parse(rows1.get(j).getDate());
-                        LocalDate localDate2 = LocalDate.parse(rows1.get(j+1).getDate());
-                        if (localDate1.isBefore(localDate2)) {
-                            Notice temp=rows1.get(j);
-                            rows1.set(j,rows1.get(j+1));
-                            rows1.set(j+1,temp);
-                        }
-                    }
-                }
-                rows.addAll(rows1);
-            }
+            List<Notice> rows1= mapper.selectByPageAndCondition1(notice);
+            List<Notice> notices1 = sortRows(rows1);
+            rows.addAll(notices1);
         }
         if (state.isEmpty()||"普通".equals(state)){
-            rows2= mapper.selectByPageAndCondition2(begin,size,notice);
-            if (rows2!=null){
-                int n = rows2.size();
-                for (int i = 0; i < n-1; i++) {
-                    for (int j = 0; j < n-i-1; j++) {
-                        LocalDate localDate1 = LocalDate.parse(rows2.get(j).getDate());
-                        LocalDate localDate2 = LocalDate.parse(rows2.get(j+1).getDate());
-                        if (localDate1.isBefore(localDate2)) {
-                            Notice temp=rows2.get(j);
-                            rows2.set(j,rows2.get(j+1));
-                            rows2.set(j+1,temp);
-                        }
-                    }
-                }
-                rows.addAll(rows2);
+            List<Notice> rows2= mapper.selectByPageAndCondition2(notice);
+            List<Notice> notices2 = sortRows(rows2);
+            rows.addAll(notices2);
+        }
+        List<Notice> rows3 = new ArrayList<>();
+        for (int i = begin; i < begin + size; i++) {
+            if (!(i < rows.size())) {
+                break;
             }
+            rows3.add(rows.get(i));
         }
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(notice);
         PageBean<Notice> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows3);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -141,4 +121,22 @@ public class NoticeServiceImpl implements NoticeService {
         // 释放资源
         sqlSession.close();
     }
+
+    //将公告信息排列
+    private List<Notice> sortRows(List<Notice> rows){
+        int n = rows.size();
+        for (int i = 0; i < n-1; i++) {
+            for (int j = 0; j < n-i-1; j++) {
+                LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
+                LocalDate localDate2 = LocalDate.parse(rows.get(j+1).getDate());
+                if (localDate1.isBefore(localDate2)) {
+                    Notice temp=rows.get(j);
+                    rows.set(j,rows.get(j+1));
+                    rows.set(j+1,temp);
+                }
+            }
+        }
+        return rows;
+    }
+
 }

@@ -13,18 +13,17 @@
         select * from tb_notice
         where state='置顶'
 
-        <if test="notice.title!=null and notice.title!='' ">
-            and ( title like #{notice.title}
+        <if test="title!=null and title!='' ">
+            and ( title like #{title}
         </if>
 
-        <if test="notice.text!=null and notice.text!='' ">
-            or text like #{notice.text} )
+        <if test="text!=null and text!='' ">
+            or text like #{text} )
         </if>
 
-        <if test="notice.date!=null and notice.date!=''">
-            and date like #{notice.date}
+        <if test="date!=null and date!=''">
+            and date like #{date}
         </if>
-        limit #{begin},#{size}
     </select>
 
     <!--分页条件查询普通公告-->
@@ -32,19 +31,17 @@
         select * from tb_notice
         where state='普通'
 
-        <if test="notice.title!=null and notice.title!='' ">
-            and ( title like #{notice.title}
+        <if test="title!=null and title!='' ">
+            and ( title like #{title}
         </if>
 
-        <if test="notice.text!=null and notice.text!='' ">
-            or text like #{notice.text} )
+        <if test="text!=null and text!='' ">
+            or text like #{text} )
         </if>
 
-        <if test="notice.date!=null and notice.date!=''">
-            and date like #{notice.date}
+        <if test="date!=null and date!=''">
+            and date like #{date}
         </if>
-
-        limit #{begin},#{size}
     </select>
 
     <!--条件查询公告总页数-->

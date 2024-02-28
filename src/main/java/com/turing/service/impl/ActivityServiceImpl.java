@@ -64,25 +64,19 @@ public class ActivityServiceImpl implements ActivityService {
         }
         //提交事务
         sqlSession.commit();
-        List<Activity> rows = mapper.selectByPageAndCondition(begin, size, activity);
-        if (rows != null) {
-            int n = rows.size();
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = 0; j < n - i - 1; j++) {
-                    LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
-                    LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
-                    if (localDate1.isBefore(localDate2)) {
-                        Activity temp = rows.get(j);
-                        rows.set(j, rows.get(j + 1));
-                        rows.set(j + 1, temp);
-                    }
-                }
+        List<Activity> rows = mapper.selectByPageAndCondition(activity);
+        List<Activity> rows1 = sortRows(rows);
+        List<Activity> rows2=new ArrayList<>();
+        for (int i = begin; i < begin+size; i++) {
+            if (!(i <rows1.size())){
+                break;
             }
+            rows2.add(rows1.get(i));
         }
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(activity);
         PageBean<Activity> pageBean = new PageBean<>();
-        pageBean.setRows(rows);
+        pageBean.setRows(rows2);
         pageBean.setTotalCount(totalCount);
         // 释放资源
         sqlSession.close();
@@ -217,21 +211,10 @@ public class ActivityServiceImpl implements ActivityService {
             rows.add(activity1);
         }
         //排序
-        int n = rows.size();
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
-                LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
-                if (localDate1.isBefore(localDate2)) {
-                    Activity temp = rows.get(j);
-                    rows.set(j, rows.get(j + 1));
-                    rows.set(j + 1, temp);
-                }
-            }
-        }
+        List<Activity> rows1 = sortRows(rows);
         // 释放资源
         sqlSession.close();
-        return rows;
+        return rows1;
     }
 
     //退出活动
@@ -248,5 +231,22 @@ public class ActivityServiceImpl implements ActivityService {
         sqlSession.commit();
         // 释放资源
         sqlSession.close();
+    }
+
+    //按活动日期排序
+    private List<Activity> sortRows(List<Activity> rows){
+        int n = rows.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                LocalDate localDate1 = LocalDate.parse(rows.get(j).getDate());
+                LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getDate());
+                if (localDate1.isBefore(localDate2)) {
+                    Activity temp = rows.get(j);
+                    rows.set(j, rows.get(j + 1));
+                    rows.set(j + 1, temp);
+                }
+            }
+        }
+        return rows;
     }
 }
