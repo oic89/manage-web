@@ -20,9 +20,9 @@ public class CheckCodeUtil {
     /**
      * 输出随机验证码图片流,并返回验证码值（一般传入输出流，响应response页面端，Web项目用的较多）
      *
-     * @param width 图片宽度
-     * @param height 图片高度
-     * @param os  输出流
+     * @param width      图片宽度
+     * @param height     图片高度
+     * @param os         输出流
      * @param verifySize 数据长度
      * @return 验证码数据
      * @throws IOException
@@ -79,7 +79,6 @@ public class CheckCodeUtil {
         outputImage(w, h, outputFile, verifyCode);
         return verifyCode;
     }
-
 
 
     /**

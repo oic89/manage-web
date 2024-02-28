@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.SalaryMapper" >
+<mapper namespace="com.turing.mapper.SalaryMapper">
 
     <!--映射设置(表名和类名不一致时)-->
     <resultMap id="salaryResultMap" type="salary">

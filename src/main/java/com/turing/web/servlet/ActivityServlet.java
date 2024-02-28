@@ -2,7 +2,6 @@ package com.turing.web.servlet;
 
 import com.alibaba.fastjson.JSON;
 import com.turing.pojo.Activity;
-import com.turing.pojo.Notice;
 import com.turing.pojo.PageBean;
 import com.turing.service.ActivityService;
 import com.turing.service.impl.ActivityServiceImpl;
@@ -17,22 +16,23 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/activity/*")
-public class ActivityServlet extends BaseServlet{
-    private final ActivityService activityService=new ActivityServiceImpl();
+public class ActivityServlet extends BaseServlet {
+    private final ActivityService activityService = new ActivityServiceImpl();
 
     //分页条件查询活动
     public void selectByPageAndCondition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //获取页码
         String currentPage_ = request.getParameter("currentPage");
         String pageSize_ = request.getParameter("pageSize");
         int currentPage = Integer.parseInt(currentPage_);
-        int pageSize=Integer.parseInt(pageSize_);
+        int pageSize = Integer.parseInt(pageSize_);
         //接收json字符串数据
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //调用Service
-        PageBean<Activity> pageBean = activityService.selectByPageAndCondition(currentPage,pageSize,activity);
+        PageBean<Activity> pageBean = activityService.selectByPageAndCondition(currentPage, pageSize, activity);
         //转为JSON
         String jsonString = JSON.toJSONString(pageBean);
         //写数据
@@ -46,7 +46,7 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //调用Service
         activityService.updateActivity(activity);
         //写数据
@@ -59,7 +59,7 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         activity.setState("待办");
         activity.setNumber(0);
         //调用Service
@@ -74,7 +74,7 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //调用Service
         activityService.deleteActivity(activity);
         //写数据
@@ -87,7 +87,7 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //调用Service
         List<Activity> rows = activityService.selectActivityData(activity);
         //转为JSON
@@ -103,7 +103,7 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //调用Service
         activityService.updateScore(activity);
         response.getWriter().write("success");
@@ -115,10 +115,10 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //获取session
-        HttpSession session=request.getSession();
-        int id= (int) session.getAttribute("userId");
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("userId");
         activity.setUserId(id);
         //调用Service
         String result = activityService.addActivityData(activity);
@@ -127,10 +127,9 @@ public class ActivityServlet extends BaseServlet{
 
     //查找我的活动
     public void selectMyActivityData(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Activity activity=new Activity();
+        Activity activity = new Activity();
         //获取session
-        HttpSession session=request.getSession();
-        int id= (int) session.getAttribute("userId");
+        int id = getSessionId(request);
         activity.setUserId(id);
         //调用Service
         List<Activity> activities = activityService.selectMyActivityData(activity);
@@ -147,14 +146,21 @@ public class ActivityServlet extends BaseServlet{
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Activity对象
-        Activity activity= JSON.parseObject(params, Activity.class);
+        Activity activity = JSON.parseObject(params, Activity.class);
         //获取session
-        HttpSession session=request.getSession();
-        int id= (int) session.getAttribute("userId");
+        int id = getSessionId(request);
         activity.setUserId(id);
         //调用Service
         activityService.deleteActivityData(activity);
         response.getWriter().write("success");
+    }
+
+    //获取session的userId
+    private int getSessionId(HttpServletRequest request) {
+        //获取session
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("userId");
+        return id;
     }
 
 }

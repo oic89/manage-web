@@ -41,9 +41,9 @@ public class ContextLoadListener implements ServletContextListener {
         // 关闭调度器
         try {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-                if (scheduler != null && !scheduler.isShutdown()) {
-                    scheduler.shutdown();
-                }
+            if (scheduler != null && !scheduler.isShutdown()) {
+                scheduler.shutdown();
+            }
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class ContextLoadListener implements ServletContextListener {
     public static class salaryStat implements Job {
         public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("salaryStat1");
-            SalaryService salaryService=new SalaryServiceImpl();
+            SalaryService salaryService = new SalaryServiceImpl();
             salaryService.salaryStat();
         }
     }

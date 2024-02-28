@@ -24,27 +24,29 @@ public class LeaveServiceImpl implements LeaveService {
         //获取UserMapper
         LeaveMapper mapper = sqlSession.getMapper(LeaveMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //处理模糊表达式
         String name = leave.getName();
-        if (name!= null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             leave.setName("%" + name + "%");
         }
         String reason = leave.getReason();
-        if (reason!= null && !reason.isEmpty()) {
+        if (reason != null && !reason.isEmpty()) {
             leave.setReason("%" + reason + "%");
         }
         String startDate = leave.getStartDate();
-        if (startDate!= null && !startDate.isEmpty()) {
+        if (startDate != null && !startDate.isEmpty()) {
             leave.setStartDate("%" + startDate + "%");
             leave.setLastDate("%" + startDate + "%");
         }
         //调用mapper
         List<Leave> rows = mapper.selectByPageAndCondition(leave);
+        //按起始时间排序
         List<Leave> rows1 = sortRows(rows);
-        List<Leave> rows2 = selectRows(begin,size,rows1);
+        //取出所需页码数据
+        List<Leave> rows2 = selectRows(begin, size, rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(leave);
         PageBean<Leave> pageBean = new PageBean<>();
@@ -63,22 +65,24 @@ public class LeaveServiceImpl implements LeaveService {
         //获取UserMapper
         LeaveMapper mapper = sqlSession.getMapper(LeaveMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         String reason = leave.getReason();
-        if (reason!= null && !reason.isEmpty()) {
+        if (reason != null && !reason.isEmpty()) {
             leave.setReason("%" + reason + "%");
         }
         String startDate = leave.getStartDate();
-        if (startDate!= null && !startDate.isEmpty()) {
+        if (startDate != null && !startDate.isEmpty()) {
             leave.setStartDate("%" + startDate + "%");
             leave.setLastDate("%" + startDate + "%");
         }
         //调用mapper
         List<Leave> rows = mapper.selectByPageAndCondition1(leave);
+        //按起始时间排序
         List<Leave> rows1 = sortRows(rows);
-        List<Leave> rows2 = selectRows(begin,size,rows1);
+        //取出所需页码数据
+        List<Leave> rows2 = selectRows(begin, size, rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition1(leave);
         PageBean<Leave> pageBean = new PageBean<>();
@@ -189,20 +193,20 @@ public class LeaveServiceImpl implements LeaveService {
         SqlSession sqlSession = factory.openSession();
         //获取Mapper
         LeaveMapper leaveMapper = sqlSession.getMapper(LeaveMapper.class);
-        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
-        ActivityMapper activityMapper=sqlSession.getMapper(ActivityMapper.class);
-        WorkMapper workMapper=sqlSession.getMapper(WorkMapper.class);
-        SalaryMapper salaryMapper=sqlSession.getMapper(SalaryMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        ActivityMapper activityMapper = sqlSession.getMapper(ActivityMapper.class);
+        WorkMapper workMapper = sqlSession.getMapper(WorkMapper.class);
+        SalaryMapper salaryMapper = sqlSession.getMapper(SalaryMapper.class);
         //调用mapper
         //删除work
-        Work work=new Work();
+        Work work = new Work();
         work.setUserId(leave.getUserId());
         workMapper.deleteWorkByUserId(work);
         //删除activityData
-        Activity activity=new Activity();
+        Activity activity = new Activity();
         activity.setUserId(leave.getUserId());
         List<Activity> activityDatas = activityMapper.selectActivityDataByUserId(activity);
-        if (!activityDatas.isEmpty()){
+        if (!activityDatas.isEmpty()) {
             //更新number
             for (Activity activityData : activityDatas) {
                 activityMapper.updateNumberByActivityId(activityData);
@@ -214,7 +218,7 @@ public class LeaveServiceImpl implements LeaveService {
         salary.setUserId(leave.getUserId());
         salaryMapper.deleteSalaryByUserId(salary);
         //改user状态
-        User user=new User();
+        User user = new User();
         user.setId(leave.getUserId());
         user.setIsJob("离职");
         userMapper.updateState(user);
@@ -233,18 +237,18 @@ public class LeaveServiceImpl implements LeaveService {
         SqlSession sqlSession = factory.openSession();
         //获取Mapper
         LeaveMapper leaveMapper = sqlSession.getMapper(LeaveMapper.class);
-        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
         User user = new User();
         user.setId(leave.getUserId());
         User user1 = userMapper.selectUserById(user);
         //封装leave
-        if (leave.getStartDate()==null|| Objects.equals(leave.getStartDate(), "")){
+        if (leave.getStartDate() == null || Objects.equals(leave.getStartDate(), "")) {
             leave.setState("离职申请");
             //获取时间
-            LocalDate date=LocalDate.now();
+            LocalDate date = LocalDate.now();
             leave.setStartDate(String.valueOf(date));
-        }else {
+        } else {
             leave.setState("请假申请");
         }
         leave.setName(user1.getName());
@@ -259,7 +263,7 @@ public class LeaveServiceImpl implements LeaveService {
     }
 
     //按日期排序
-    private List<Leave> sortRows(List<Leave> rows){
+    private List<Leave> sortRows(List<Leave> rows) {
         int n = rows.size();
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {
@@ -267,7 +271,7 @@ public class LeaveServiceImpl implements LeaveService {
                 LocalDate localDate2 = LocalDate.parse(rows.get(j + 1).getStartDate());
                 if (localDate1.isBefore(localDate2)) {
                     Leave temp = rows.get(j);
-                    rows.set(j,rows.get(j + 1));
+                    rows.set(j, rows.get(j + 1));
                     rows.set(j + 1, temp);
                 }
             }

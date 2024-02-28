@@ -1,7 +1,6 @@
 package com.turing.service;
 
 import com.turing.pojo.Activity;
-import com.turing.pojo.Notice;
 import com.turing.pojo.PageBean;
 
 import java.util.List;

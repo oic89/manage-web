@@ -1,6 +1,5 @@
 package com.turing.service;
 
-import com.turing.pojo.Admin;
 import com.turing.pojo.PageBean;
 import com.turing.pojo.User;
 
@@ -21,10 +20,10 @@ public interface UserService {
     String updateUser(User user);
 
     //分页条件查询用户信息
-    PageBean<User> selectByPageAndCondition(int currentPage,int pageSize,User user);
+    PageBean<User> selectByPageAndCondition(int currentPage, int pageSize, User user);
 
     //分页条件查询离职用户信息
-    PageBean<User> selectByPageAndCondition2(int currentPage,int pageSize,User user);
+    PageBean<User> selectByPageAndCondition2(int currentPage, int pageSize, User user);
 
     //复职
     void reWork(User user);

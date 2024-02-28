@@ -25,11 +25,13 @@ import java.nio.file.Paths;
 public class CheckCodeServlet extends BaseServlet {
     String checkCode;
 
+    //验证码图片
     public void checkCodeImg(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletOutputStream os = response.getOutputStream();
         checkCode = CheckCodeUtil.outputVerifyImage(100, 50, os, 4);
     }
 
+    //验证码字符
     public void code(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //获取输入验证码
         BufferedReader br = request.getReader();

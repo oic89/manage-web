@@ -14,7 +14,7 @@ public interface LeaveService {
     PageBean<Leave> selectByPageAndCondition1(int currentPage, int pageSize, Leave leave);
 
     //修改请假信息
-    void updateLeave (Leave leave);
+    void updateLeave(Leave leave);
 
     //删除请假信息
     void deleteLeave(Leave leave);

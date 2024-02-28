@@ -1,6 +1,5 @@
 package com.turing.pojo;
 
-//工作表现
 public class Work {
     //id
     private Integer id;

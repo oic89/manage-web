@@ -15,8 +15,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebServlet("/admin/*")
-public class AdminServlet extends BaseServlet{
-    private final AdminService adminService=new AdminServiceImpl();
+public class AdminServlet extends BaseServlet {
+    private final AdminService adminService = new AdminServiceImpl();
 
     //登录
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,15 +26,16 @@ public class AdminServlet extends BaseServlet{
         //转为admin对象
         Admin admin = JSON.parseObject(params, Admin.class);
         //调用Service
-        User user=adminService.login(admin);
+        User user = adminService.login(admin);
         //将id存入Session
-        if(user!=null){
-            HttpSession session=request.getSession();
-            if (session.getAttribute("adminId")!=null||session.getAttribute("userId")!=null){
+        if (user != null) {
+            HttpSession session = request.getSession();
+            if (session.getAttribute("adminId") != null || session.getAttribute("userId") != null) {
+                //浏览器已登录
                 response.getWriter().write("isFull");
                 return;
             }
-            session.setAttribute("adminId",user.getId());
+            session.setAttribute("adminId", user.getId());
         }
         //转为JSON
         String jsonString = JSON.toJSONString(user);
@@ -51,7 +52,7 @@ public class AdminServlet extends BaseServlet{
         //转为admin对象
         Admin admin = JSON.parseObject(params, Admin.class);
         //调用Service
-        String result=adminService.addAdmin(admin);
+        String result = adminService.addAdmin(admin);
         //返回结果
         response.getWriter().write(result);
     }
@@ -59,8 +60,7 @@ public class AdminServlet extends BaseServlet{
     //返回数据
     public void loadData(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //获取Session
-        HttpSession session=request.getSession();
-        int id = (int) session.getAttribute("adminId");
+        int id = getSessionId(request);
         //调用Service
         Admin admin = adminService.loadData(id);
         //转为JSON
@@ -73,7 +73,7 @@ public class AdminServlet extends BaseServlet{
     //登出
     public void loadOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //获取Session
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
         //删除session
         session.invalidate();
         //返回结果
@@ -87,27 +87,28 @@ public class AdminServlet extends BaseServlet{
         String params = br.readLine();
         // 分割字符串{"xx":"xxx"}
         String[] parts = params.split("\":\"");
-        if (parts.length > 1) {
-            String part=parts[1];
-            String password=part.substring(0,part.length()-2);
-            //获取Session
-            HttpSession session=request.getSession();
-            int id = (int) session.getAttribute("adminId");
-            //封装admin
-            Admin admin=new Admin();
-            admin.setPassword(password);
-            admin.setId(id);
-            //调用Service
-            String result=adminService.logOffAdmin(admin);
-            //返回结果
-            if ("success".equals(result)){
-                //删除session
-                session.invalidate();
-            }
-            response.getWriter().write(result);
+        if (parts.length <= 1) {
+            //获取数据失败
+            response.getWriter().write("fail");
             return;
         }
-        response.getWriter().write("fail");
+        String part = parts[1];
+        String password = part.substring(0, part.length() - 2);
+        //获取Session
+        int id = getSessionId(request);
+        //封装admin
+        Admin admin = new Admin();
+        admin.setPassword(password);
+        admin.setId(id);
+        //调用Service
+        String result = adminService.logOffAdmin(admin);
+        //返回结果
+        if ("success".equals(result)) {
+            HttpSession session = request.getSession();
+            //删除session
+            session.invalidate();
+        }
+        response.getWriter().write(result);
     }
 
     //修改信息
@@ -118,11 +119,10 @@ public class AdminServlet extends BaseServlet{
         //转为admin对象
         Admin admin = JSON.parseObject(params, Admin.class);
         //获取Session
-        HttpSession session=request.getSession();
-        int id = (int) session.getAttribute("adminId");
+        int id = getSessionId(request);
         admin.setId(id);
         //调用Service
-        String result=adminService.modifyInformation(admin);
+        String result = adminService.modifyInformation(admin);
         response.getWriter().write(result);
     }
 
@@ -134,11 +134,18 @@ public class AdminServlet extends BaseServlet{
         //转为admin对象
         Admin admin = JSON.parseObject(params, Admin.class);
         //获取Session
-        HttpSession session=request.getSession();
-        int id = (int) session.getAttribute("adminId");
+        int id = getSessionId(request);
         admin.setId(id);
         //调用Service
-        String result=adminService.modifyPassword(admin);
+        String result = adminService.modifyPassword(admin);
         response.getWriter().write(result);
+    }
+
+    //获取session的adminId
+    private int getSessionId(HttpServletRequest request) {
+        //获取Session
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("adminId");
+        return id;
     }
 }

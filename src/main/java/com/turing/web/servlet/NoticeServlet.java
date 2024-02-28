@@ -20,6 +20,7 @@ public class NoticeServlet extends BaseServlet{
 
     //分页条件查询公告
     public void selectByPageAndCondition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //获取页码
         String currentPage_ = request.getParameter("currentPage");
         String pageSize_ = request.getParameter("pageSize");
         int currentPage = Integer.parseInt(currentPage_);

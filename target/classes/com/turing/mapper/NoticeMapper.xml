@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.NoticeMapper" >
+<mapper namespace="com.turing.mapper.NoticeMapper">
 
 
     <!--分页条件查询置顶公告-->
