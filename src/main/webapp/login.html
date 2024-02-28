@@ -46,12 +46,11 @@
         <el-form :model="user" status-icon :rules="rules" ref="user" label-width="70px" class="demo-userForm">
             <!--账号-->
             <el-form-item label="账号" prop="account">
-                <el-input v-model="user.account" placeholder="请输入账号" autocomplete="off"></el-input>
+                <el-input v-model="user.account" placeholder="请输入账号" autocomplete="off" :maxlength="8"></el-input>
             </el-form-item>
             <!--密码-->
             <el-form-item label="密码" prop="password">
-                <el-input type="password" v-model="user.password" placeholder="请输入密码"
-                          autocomplete="off"></el-input>
+                <el-input type="password" v-model="user.password" placeholder="请输入密码" :maxlength="8" autocomplete="off"></el-input>
             </el-form-item>
             <!--登录角色选择-->
             <el-col :span="12">

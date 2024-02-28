@@ -58,11 +58,11 @@
                     <el-form :inline="true" :model="formInline" class="demo-form-inline">
                         <!--活动名称-->
                         <el-form-item label="活动名称">
-                            <el-input v-model="formInline.activityName" placeholder="活动名称" size="default" ></el-input>
+                            <el-input v-model="formInline.activityName" placeholder="活动名称" size="default" :maxlength="15"></el-input>
                         </el-form-item>
                         <!--日期-->
                         <el-form-item label="日期">
-                            <el-input v-model="formInline.date" placeholder="日期" size="default"></el-input>
+                            <el-input v-model="formInline.date" placeholder="日期" size="default" :maxlength="10"></el-input>
                         </el-form-item>
                         <!--状态-->
                         <el-form-item label="状态">
@@ -171,7 +171,7 @@
                 </el-form-item>
                 <!--验证密码-->
                 <el-form-item label="确认密码" prop="checkPassword">
-                    <el-input type="password" v-model="ruleRegisterForm.checkPassword"></el-input>
+                    <el-input type="password" v-model="ruleRegisterForm.checkPassword" :maxlength="8"></el-input>
                 </el-form-item>
                 <!--性别-->
                 <el-form-item v-if="!isAdmin" label="性别" prop="sex">
@@ -213,7 +213,7 @@
                 <el-form :model="ruleLogOffForm" status-icon :rules="logOffRules" ref="ruleLogOffForm" label-width="100px" class="demo-ruleForm">
                    <!--密码-->
                    <el-form-item label="密码" prop="pass">
-                       <el-input type="password" v-model="ruleLogOffForm.pass" autocomplete="off"></el-input>
+                       <el-input type="password" v-model="ruleLogOffForm.pass" autocomplete="off" :maxlength="8"></el-input>
                    </el-form-item>
                    <!--提交按钮-->
                    <el-form-item>
@@ -238,25 +238,25 @@
                      <!--修改信息显示的表单项-->
                      <!--账号-->
                      <el-form-item label="账号" prop="account" v-if="!ruleModifyForm.switch">
-                         <el-input v-model="ruleModifyForm.account"></el-input>
+                         <el-input v-model="ruleModifyForm.account" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--姓名-->
                      <el-form-item label="姓名" prop="name" v-if="!ruleModifyForm.switch">
-                         <el-input v-model="ruleModifyForm.name"></el-input>
+                         <el-input v-model="ruleModifyForm.name" :maxlength="8"></el-input>
                      </el-form-item>
 
                      <!-- 修改密码显示的表单项 -->
                      <!--原密码-->
                      <el-form-item label="原密码" prop="pass" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--新密码-->
                      <el-form-item label="新密码" prop="password" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--确认密码-->
                      <el-form-item label="确认密码" prop="checkPassword" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--按钮-->
                      <el-form-item>
@@ -284,7 +284,7 @@
         <span>
             <el-form :model="activityData" status-icon :rules="activityRules" ref="activityData" label-width="100px" class="demo-ruleForm">
             <el-form-item label="活动名称" prop="activityName">
-                <el-input v-model="activityData.activityName" maxlength="16"></el-input>
+                <el-input v-model="activityData.activityName" maxlength="15"></el-input>
             </el-form-item>
             <el-form-item label="活动日期" required>
                 <el-col :span="11">
@@ -301,7 +301,7 @@
                 </el-col>
             </el-form-item>
             <el-form-item label="活动介绍" prop="brief">
-                <el-input type="textarea" v-model="activityData.brief" maxlength="51"></el-input>
+                <el-input type="textarea" v-model="activityData.brief" maxlength="50"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitActivityForm('activityData')">提交</el-button>
@@ -319,7 +319,7 @@
         <span>
             <el-form :model="activityData" status-icon :rules="activityRules" ref="activityData" label-width="100px" class="demo-ruleForm">
             <el-form-item label="活动名称" prop="activityName">
-                <el-input v-model="activityData.activityName" maxlength="16"></el-input>
+                <el-input v-model="activityData.activityName" maxlength="15"></el-input>
             </el-form-item>
             <el-form-item label="活动日期" required>
                 <el-col :span="11">
@@ -336,7 +336,7 @@
                 </el-col>
             </el-form-item>
             <el-form-item label="活动介绍" prop="brief">
-                <el-input type="textarea" v-model="activityData.brief" maxlength="51"></el-input>
+                <el-input type="textarea" v-model="activityData.brief" maxlength="50"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitNewForm('activityData')">提交</el-button>
@@ -375,7 +375,7 @@
             <el-form :inline="true" :model="activityData" class="demo-form-inline">
                 <!--活动名称-->
                 <el-form-item label="姓名">
-                    <el-input v-model="activityData.userName" placeholder="姓名" size="small" style="width: 120px"></el-input>
+                    <el-input v-model="activityData.userName" placeholder="姓名" size="small" style="width: 120px" :maxlength="8"></el-input>
                 </el-form-item>
                 <!--得分-->
                 <el-form-item label="得分">
@@ -494,8 +494,8 @@
                                     type: 'success',
                                     message: '评分成功!'
                                 });
+                                this.selectCheck();
                             }
-                            this.selectCheck();
                         })
                     } else {
                         console.log('error submit!!');

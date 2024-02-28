@@ -132,7 +132,8 @@ public class UserServiceImpl implements UserService {
         } else {
             user2.setFace("img/" + user.getId() + ".jpg");
         }
-        if (user.getAccount() != null && !user.getAccount().isEmpty()) {
+        if (user.getAccount() != null && !user.getAccount().isEmpty() && user.getBasicSalary() !=null) {
+            //管理员修改
             user2.setAccount(user.getAccount());
             user2.setBasicSalary(user.getBasicSalary());
         }

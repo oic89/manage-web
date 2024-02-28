@@ -93,8 +93,11 @@ public class UserServlet extends BaseServlet {
         //转为User对象
         User user = JSON.parseObject(params, User.class);
         //获取session
-        int id = getSessionId(request);
-        user.setId(id);
+        //获取Session
+        HttpSession session = request.getSession();
+        if (session.getAttribute("userId")!=null){
+            user.setId((Integer) session.getAttribute("userId"));
+        }
         //调用Service
         String result = userService.updateUser(user);
         response.getWriter().write(result);

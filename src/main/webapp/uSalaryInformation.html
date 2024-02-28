@@ -136,7 +136,7 @@
                             <el-table-column
                                     prop="leaveTime"
                                     align="center"
-                                    label="请假次数">
+                                    label="请假天数">
                             </el-table-column>
                             <!--本月薪资-->
                             <el-table-column
@@ -195,7 +195,7 @@
                      <br>
                      <!--姓名-->
                      <el-form-item label="姓名" prop="name" v-if="!ruleModifyForm.switch">
-                         <el-input v-model="ruleModifyForm.name"></el-input>
+                         <el-input v-model="ruleModifyForm.name" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--性别-->
                      <el-form-item label="性别" v-if="!ruleModifyForm.switch">
@@ -208,15 +208,15 @@
                      <!-- 修改密码显示的表单项 -->
                      <!--原密码-->
                      <el-form-item label="原密码" prop="pass" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--新密码-->
                      <el-form-item label="新密码" prop="password" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--确认密码-->
                      <el-form-item label="确认密码" prop="checkPassword" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--按钮-->
                      <el-form-item>

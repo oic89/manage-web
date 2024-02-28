@@ -62,7 +62,7 @@
                         </el-form-item>
                         <!--日期-->
                         <el-form-item label="日期">
-                            <el-input v-model="formInline.date" placeholder="日期" size="default" ></el-input>
+                            <el-input v-model="formInline.date" placeholder="日期" size="default" :maxlength="10"></el-input>
                         </el-form-item>
                         <!--状态-->
                         <el-form-item label="是否置顶">
@@ -175,7 +175,7 @@
                 </el-form-item>
                 <!--验证密码-->
                 <el-form-item label="确认密码" prop="checkPassword">
-                    <el-input type="password" v-model="ruleRegisterForm.checkPassword"></el-input>
+                    <el-input type="password" v-model="ruleRegisterForm.checkPassword" :maxlength="8"></el-input>
                 </el-form-item>
                 <!--性别-->
                 <el-form-item v-if="!isAdmin" label="性别" prop="sex">
@@ -217,7 +217,7 @@
                 <el-form :model="ruleLogOffForm" status-icon :rules="logOffRules" ref="ruleLogOffForm" label-width="100px" class="demo-ruleForm">
                    <!--密码-->
                    <el-form-item label="密码" prop="pass">
-                       <el-input type="password" v-model="ruleLogOffForm.pass" autocomplete="off"></el-input>
+                       <el-input type="password" v-model="ruleLogOffForm.pass" autocomplete="off" :maxlength="8"></el-input>
                    </el-form-item>
                    <!--提交按钮-->
                    <el-form-item>
@@ -242,25 +242,25 @@
                      <!--修改信息显示的表单项-->
                      <!--账号-->
                      <el-form-item label="账号" prop="account" v-if="!ruleModifyForm.switch">
-                         <el-input v-model="ruleModifyForm.account"></el-input>
+                         <el-input v-model="ruleModifyForm.account" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--姓名-->
                      <el-form-item label="姓名" prop="name" v-if="!ruleModifyForm.switch">
-                         <el-input v-model="ruleModifyForm.name"></el-input>
+                         <el-input v-model="ruleModifyForm.name" :maxlength="8"></el-input>
                      </el-form-item>
 
                      <!-- 修改密码显示的表单项 -->
                      <!--原密码-->
                      <el-form-item label="原密码" prop="pass" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.pass" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--新密码-->
                      <el-form-item label="新密码" prop="password" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.password" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--确认密码-->
                      <el-form-item label="确认密码" prop="checkPassword" v-if="ruleModifyForm.switch">
-                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off"></el-input>
+                         <el-input type="password" v-model="ruleModifyForm.checkPassword" autocomplete="off" :maxlength="8"></el-input>
                      </el-form-item>
                      <!--按钮-->
                      <el-form-item>
@@ -288,10 +288,10 @@
         <span>
              <el-form :model="noticeData" status-icon :rules="noticeRules" ref="noticeData" label-width="100px" class="demo-ruleForm">
              <el-form-item label="标题" prop="title">
-                 <el-input v-model="noticeData.title" maxlength="21"></el-input>
+                 <el-input v-model="noticeData.title" maxlength="20"></el-input>
              </el-form-item>
              <el-form-item label="正文" prop="text">
-                 <el-input type="textarea" v-model="noticeData.text" maxlength="51"></el-input>
+                 <el-input type="textarea" v-model="noticeData.text" maxlength="50"></el-input>
              </el-form-item>
              <el-form-item label="是否置顶">
                 <el-select v-model="noticeData.state" label="否" value="普通">
@@ -315,7 +315,7 @@
         <span>
              <el-form :model="noticeData" status-icon :rules="noticeRules" ref="noticeData" label-width="100px" class="demo-ruleForm">
              <el-form-item label="标题" prop="title">
-                 <el-input v-model="noticeData.title" maxlength="21"></el-input>
+                 <el-input v-model="noticeData.title" maxlength="20"></el-input>
              </el-form-item>
              <el-form-item label="正文" prop="text">
                  <el-input type="textarea" v-model="noticeData.text" maxlength="50"></el-input>

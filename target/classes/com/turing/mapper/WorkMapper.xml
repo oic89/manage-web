@@ -16,7 +16,7 @@
         select * from tb_work
         <where>
             <if test="name!=null and name!='' ">
-                and name like #{work.name}
+                and name like #{name}
             </if>
 
             <if test="date!=null and date!=''">
