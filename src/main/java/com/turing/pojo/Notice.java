@@ -1,10 +1,5 @@
 package com.turing.pojo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-
 public class Notice {
     //id
     private Integer id;

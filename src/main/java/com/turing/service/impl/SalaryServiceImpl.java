@@ -28,14 +28,15 @@ public class SalaryServiceImpl implements SalaryService {
         //获取SqlSession对象
         SqlSession sqlSession = factory.openSession();
         //获取SalaryMapper
-        SalaryMapper mapper=sqlSession.getMapper(SalaryMapper.class);
+        SalaryMapper mapper = sqlSession.getMapper(SalaryMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //调用mapper
         //当前页数据
-        List<Salary> rows = mapper.selectByPageAndCondition(begin,size,salary);
+        List<Salary> rows = mapper.selectByPageAndCondition(begin, size, salary);
+        //按新到久排序
         Collections.reverse(rows);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(salary);
@@ -53,69 +54,69 @@ public class SalaryServiceImpl implements SalaryService {
         //获取SqlSession对象
         SqlSession sqlSession = factory.openSession();
         //获取mapper
-        SalaryMapper salaryMapper=sqlSession.getMapper(SalaryMapper.class);
-        WorkMapper workMapper=sqlSession.getMapper(WorkMapper.class);
-        LeaveMapper leaveMapper=sqlSession.getMapper(LeaveMapper.class);
-        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
+        SalaryMapper salaryMapper = sqlSession.getMapper(SalaryMapper.class);
+        WorkMapper workMapper = sqlSession.getMapper(WorkMapper.class);
+        LeaveMapper leaveMapper = sqlSession.getMapper(LeaveMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //获取上个月月份
         LocalDate lastMonth = LocalDate.from(LocalDate.now().minusMonths(1));
-        LocalDate startDay=lastMonth.withDayOfMonth(1);
-        LocalDate lastDay=lastMonth.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate startDay = lastMonth.withDayOfMonth(1);
+        LocalDate lastDay = lastMonth.with(TemporalAdjusters.lastDayOfMonth());
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM");
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date=formatter1.format(lastMonth);
-        String date_="%"+date+"%";
+        String date = formatter1.format(lastMonth);
+        String date_ = "%" + date + "%";
         //调用mapper
         //获取在职userId
         List<User> users = userMapper.selectAll();
         for (User user : users) {
             //获取请假天数
-            int leaveTime=-1;
-            Leave leave=new Leave();
+            int leaveTime = -1;
+            Leave leave = new Leave();
             leave.setUserId(user.getId());
             List<Leave> leaves = leaveMapper.selectLeaveByUserId(leave);
-            Map <LocalDate,Integer> days=new HashMap<>();
+            Map<LocalDate, Integer> days = new HashMap<>();
             for (Leave leaf : leaves) {
-                String startDate_=leaf.getStartDate();
-                String lastDate_=leaf.getLastDate();
+                String startDate_ = leaf.getStartDate();
+                String lastDate_ = leaf.getLastDate();
                 LocalDate startDate = LocalDate.parse(startDate_, formatter2);
                 LocalDate lastDate = LocalDate.parse(lastDate_, formatter2);
-                if ((startDate.isBefore(startDay)&&lastDate.isBefore(startDay)) ||(startDate.isAfter(lastDay)&&lastDate.isAfter(lastDay))){
+                if ((startDate.isBefore(startDay) && lastDate.isBefore(startDay)) || (startDate.isAfter(lastDay) && lastDate.isAfter(lastDay))) {
                     //不在上一个月
                     continue;
                 }
-                if (startDate.isBefore(startDay)&&lastDate.isAfter(lastDay)){
-                    leaveTime =lastDay.getDayOfMonth();
+                if (startDate.isBefore(startDay) && lastDate.isAfter(lastDay)) {
+                    leaveTime = lastDay.getDayOfMonth();
                     //上一个月全部请假
                     break;
                 }
-                if (startDate.isBefore(startDay)&&lastDate.isBefore(lastDay)){
-                    LocalDate start=startDay;
+                if (startDate.isBefore(startDay) && lastDate.isBefore(lastDay)) {
+                    LocalDate start = startDay;
                     //请假第一天在不在上个月
-                    while (!start.isAfter(lastDate)){
+                    while (!start.isAfter(lastDate)) {
                         days.put(start, 1);
-                        start=start.plusDays(1);
+                        start = start.plusDays(1);
                     }
                     continue;
                 }
-                if (startDate.isAfter(startDay)&&lastDate.isAfter(lastDay)){
-                    LocalDate start=startDate;
+                if (startDate.isAfter(startDay) && lastDate.isAfter(lastDay)) {
+                    LocalDate start = startDate;
                     //请假最后一天在不在上个月
-                    while (!start.isAfter(lastDay)){
+                    while (!start.isAfter(lastDay)) {
                         days.put(start, 1);
-                        start=start.plusDays(1);
+                        start = start.plusDays(1);
                     }
                     continue;
                 }
                 //请假全部在上个月
-                LocalDate start=startDate;
-                while (!start.isAfter(lastDate)){
+                LocalDate start = startDate;
+                while (!start.isAfter(lastDate)) {
                     days.put(start, 1);
-                    start=start.plusDays(1);
+                    start = start.plusDays(1);
                 }
             }
-            if (leaveTime==-1){
-                leaveTime=days.size();
+            if (leaveTime == -1) {
+                leaveTime = days.size();
             }
             //获取work
             Work work = new Work();
@@ -139,11 +140,11 @@ public class SalaryServiceImpl implements SalaryService {
             //全勤奖500，请假一天不算，请假两天50%，三天没有全勤奖
             //迟到、早退两次算请假一天，迟到早退一次扣10
             //缺勤一次扣50，缺勤没有全勤奖
-            int salary=user.getBasicSalary()-(leaveEarlyTime+lateTime)*10-absenceTime*50;
-            if (leaveTime+(leaveEarlyTime+lateTime)/2<1&&absenceTime==0){
-                salary+=500;
-            }else if (leaveTime+(leaveEarlyTime+lateTime)/2==2&&absenceTime==0){
-                salary+=250;
+            int salary = user.getBasicSalary() - (leaveEarlyTime + lateTime) * 10 - absenceTime * 50;
+            if (leaveTime + (leaveEarlyTime + lateTime) / 2 < 1 && absenceTime == 0) {
+                salary += 500;
+            } else if (leaveTime + (leaveEarlyTime + lateTime) / 2 == 2 && absenceTime == 0) {
+                salary += 250;
             }
             //封装salary
             Salary s = new Salary();

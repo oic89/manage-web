@@ -1,10 +1,8 @@
 package com.turing.service.impl;
 
 import com.turing.mapper.ActivityMapper;
-import com.turing.mapper.NoticeMapper;
 import com.turing.mapper.UserMapper;
 import com.turing.pojo.Activity;
-import com.turing.pojo.Notice;
 import com.turing.pojo.PageBean;
 import com.turing.pojo.User;
 import com.turing.service.ActivityService;
@@ -45,18 +43,18 @@ public class ActivityServiceImpl implements ActivityService {
         //调用mapper
         //更新状态
         for (Activity a : mapper.selectAll()) {
-            if ("待办".equals(a.getState())){
+            if ("待办".equals(a.getState())) {
                 LocalDate localDate = LocalDate.parse(a.getDate());
                 LocalDate now = LocalDate.now();
-                if (localDate.isBefore(now)){
+                if (localDate.isBefore(now)) {
                     a.setState("结束");
                     mapper.updateActivity(a);
                 }
             }
-            if ("结束".equals(a.getState())){
+            if ("结束".equals(a.getState())) {
                 LocalDate localDate = LocalDate.parse(a.getDate());
                 LocalDate now = LocalDate.now();
-                if (localDate.isAfter(now)){
+                if (localDate.isAfter(now)) {
                     a.setState("待办");
                     mapper.updateActivity(a);
                 }
@@ -66,9 +64,10 @@ public class ActivityServiceImpl implements ActivityService {
         sqlSession.commit();
         List<Activity> rows = mapper.selectByPageAndCondition(activity);
         List<Activity> rows1 = sortRows(rows);
-        List<Activity> rows2=new ArrayList<>();
-        for (int i = begin; i < begin+size; i++) {
-            if (!(i <rows1.size())){
+        List<Activity> rows2 = new ArrayList<>();
+        //取出所需页码的数据
+        for (int i = begin; i < begin + size; i++) {
+            if (!(i < rows1.size())) {
                 break;
             }
             rows2.add(rows1.get(i));
@@ -138,8 +137,8 @@ public class ActivityServiceImpl implements ActivityService {
         ActivityMapper mapper = sqlSession.getMapper(ActivityMapper.class);
         //调用mapper
         String userName = activity.getUserName();
-        if (userName!=null && !userName.isEmpty()){
-            activity.setUserName("%"+userName+"%");
+        if (userName != null && !userName.isEmpty()) {
+            activity.setUserName("%" + userName + "%");
         }
         List<Activity> activities = mapper.selectActivityDataById(activity);
         // 释放资源
@@ -169,16 +168,17 @@ public class ActivityServiceImpl implements ActivityService {
         SqlSession sqlSession = factory.openSession();
         //获取ActivityMapper
         ActivityMapper activityMapper = sqlSession.getMapper(ActivityMapper.class);
-        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
         //判断是否已经加入活动
         Activity activity1 = activityMapper.selectActivityDataByActivityIdAndUserId(activity);
-        if (activity1 != null){
+        if (activity1 != null) {
             // 释放资源
             sqlSession.close();
             return "fail";
         }
-        User user=new User();
+        //封装user对象
+        User user = new User();
         user.setId(activity.getUserId());
         User user1 = userMapper.selectUserById(user);
         activity.setFace(user1.getFace());
@@ -203,7 +203,7 @@ public class ActivityServiceImpl implements ActivityService {
         ActivityMapper mapper = sqlSession.getMapper(ActivityMapper.class);
         //调用mapper
         List<Activity> activities = mapper.selectMyActivityDataById(activity);
-        List<Activity> rows=new ArrayList<>();
+        List<Activity> rows = new ArrayList<>();
         //封装activities
         for (Activity a : activities) {
             Activity activity1 = mapper.selectActivityByActivityId(a);
@@ -234,7 +234,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     //按活动日期排序
-    private List<Activity> sortRows(List<Activity> rows){
+    private List<Activity> sortRows(List<Activity> rows) {
         int n = rows.size();
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {

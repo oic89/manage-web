@@ -22,9 +22,9 @@ public class AdminServiceImpl implements AdminService {
         //获取AdminMapper
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
         //调用mapper
-        Admin ad=mapper.selectAdminByAccountAndPassword(admin);
-        User user=new User();
-        if (ad!=null){
+        Admin ad = mapper.selectAdminByAccountAndPassword(admin);
+        User user = new User();
+        if (ad != null) {
             user.setId(ad.getId());
             user.setName(ad.getName());
         }
@@ -41,8 +41,8 @@ public class AdminServiceImpl implements AdminService {
         //获取AdminMapper
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
         //调用mapper
-        Admin ad=mapper.selectAdminByAccount(admin);
-        if (ad==null){
+        Admin ad = mapper.selectAdminByAccount(admin);
+        if (ad == null) {
             mapper.insertAdmin(admin);
             //提交事务
             sqlSession.commit();
@@ -78,7 +78,7 @@ public class AdminServiceImpl implements AdminService {
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
         //调用mapper
         Admin ad = mapper.selectAdminById(admin.getId());
-        if (ad.getPassword().equals(admin.getPassword())){
+        if (ad.getPassword().equals(admin.getPassword())) {
             //密码正确
             mapper.deleteAdminById(admin.getId());
             //提交事务
@@ -101,7 +101,7 @@ public class AdminServiceImpl implements AdminService {
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
         //调用mapper
         Admin admin1 = mapper.selectAdminByAccount(admin);
-        if (admin1!=null&& !Objects.equals(admin1.getId(), admin.getId())){
+        if (admin1 != null && !Objects.equals(admin1.getId(), admin.getId())) {
             //账号被占用
             // 释放资源
             sqlSession.close();
@@ -126,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
         //调用mapper
         Admin admin1 = mapper.selectAdminById(admin.getId());
-        if (!Objects.equals(admin1.getPassword(), admin.getAccount())){
+        if (!Objects.equals(admin1.getPassword(), admin.getAccount())) {
             //密码错误
             // 释放资源
             sqlSession.close();

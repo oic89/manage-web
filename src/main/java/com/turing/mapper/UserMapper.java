@@ -1,7 +1,6 @@
 package com.turing.mapper;
 
 import com.turing.pojo.User;
-import com.turing.pojo.Work;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -40,13 +39,13 @@ public interface UserMapper {
     User selectUserById(User user);
 
     //分页条件查询在职用户
-    List<User> selectByPageAndCondition(@Param("begin") int begin,@Param("size") int size,@Param("user") User user);
+    List<User> selectByPageAndCondition(@Param("begin") int begin, @Param("size") int size, @Param("user") User user);
 
     //条件查询在职用户总页数
     int selectTotalCountAndCondition(User user);
 
     //分页条件查询离职用户
-    List<User> selectByPageAndCondition2(@Param("begin") int begin,@Param("size") int size,@Param("user") User user);
+    List<User> selectByPageAndCondition2(@Param("begin") int begin, @Param("size") int size, @Param("user") User user);
 
     //条件查询离职用户总页数
     int selectTotalCountAndCondition2(User user);

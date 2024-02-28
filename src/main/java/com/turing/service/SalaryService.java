@@ -2,10 +2,6 @@ package com.turing.service;
 
 import com.turing.pojo.PageBean;
 import com.turing.pojo.Salary;
-import com.turing.pojo.User;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 public interface SalaryService {
 

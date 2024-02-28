@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.UserMapper" >
+<mapper namespace="com.turing.mapper.UserMapper">
 
     <!--映射设置(表名和类名不一致时)-->
     <resultMap id="userResultMap" type="user">
@@ -38,7 +38,7 @@
     </select>
 
     <!--条件查询在职用户总页数-->
-    <select id="selectTotalCountAndCondition" resultType="int" >
+    <select id="selectTotalCountAndCondition" resultType="int">
         select count(*) from tb_user
         where is_job='在职'
 
@@ -76,7 +76,7 @@
     </select>
 
     <!--条件查询离职用户总页数-->
-    <select id="selectTotalCountAndCondition2" resultType="int" >
+    <select id="selectTotalCountAndCondition2" resultType="int">
         select count(*) from tb_user
         where is_job='离职'
 

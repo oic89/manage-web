@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.ActivityMapper" >
+<mapper namespace="com.turing.mapper.ActivityMapper">
 
     <!--映射设置(表名和类名不一致时)-->
     <resultMap id="activityResultMap" type="activity">
@@ -62,13 +62,13 @@
         select * from tb_activity_data
         where activity_id=#{activityId}
 
-            <if test="userName!=null and userName!='' ">
-                and name like #{userName}
-            </if>
+        <if test="userName!=null and userName!='' ">
+            and name like #{userName}
+        </if>
 
-            <if test="score!=null">
-                and score =#{score}
-            </if>
+        <if test="score!=null">
+            and score =#{score}
+        </if>
     </select>
 
 </mapper>

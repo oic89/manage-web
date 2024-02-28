@@ -22,7 +22,7 @@ public class SqlSessionFactoryUtils {
     }
 
 
-    public static SqlSessionFactory getSqlSessionFactory(){
+    public static SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
     }
 }

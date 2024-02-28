@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.LeaveMapper" >
+<mapper namespace="com.turing.mapper.LeaveMapper">
 
     <!--映射设置(表名和类名不一致时)-->
     <resultMap id="leaveResultMap" type="leave">
@@ -33,7 +33,7 @@
     </select>
 
     <!--条件查询请假总页数-->
-    <select id="selectTotalCountAndCondition" resultType="int" >
+    <select id="selectTotalCountAndCondition" resultType="int">
         select count(*) from tb_leave
         where state='请假同意'
 
@@ -65,7 +65,7 @@
     </select>
 
     <!--条件查询登录用户请假总页数-->
-    <select id="selectTotalCountAndCondition1" resultType="int" >
+    <select id="selectTotalCountAndCondition1" resultType="int">
         select count(*) from tb_leave
         where state='请假同意' and user_id=#{userId}
 

@@ -24,24 +24,26 @@ public class WorkServiceImpl implements WorkService {
         //获取WorkMapper
         WorkMapper mapper = sqlSession.getMapper(WorkMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //处理模糊表达式
         String name = work.getName();
-        if (name!= null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             work.setName("%" + name + "%");
         }
         //处理模糊表达式
         String date = work.getDate();
-        if (date!= null && !date.isEmpty()) {
+        if (date != null && !date.isEmpty()) {
             work.setDate("%" + date + "%");
         }
         //调用mapper
         //当前页数据
         List<Work> rows = mapper.selectByPageAndCondition(work);
+        //按时间排序
         List<Work> rows1 = sortRows(rows);
-        List<Work> rows2 = selectRows(begin,size,rows1);
+        //取出所需页码数据
+        List<Work> rows2 = selectRows(begin, size, rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(work);
         PageBean<Work> pageBean = new PageBean<>();
@@ -60,19 +62,21 @@ public class WorkServiceImpl implements WorkService {
         //获取WorkMapper
         WorkMapper mapper = sqlSession.getMapper(WorkMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //处理模糊表达式
         String date = work.getDate();
-        if (date!= null && !date.isEmpty()) {
+        if (date != null && !date.isEmpty()) {
             work.setDate("%" + date + "%");
         }
         //调用mapper
         //当前页数据
         List<Work> rows = mapper.selectByPageAndCondition1(work);
+        //按时间排序
         List<Work> rows1 = sortRows(rows);
-        List<Work> rows2 = selectRows(begin,size,rows1);
+        //取出所需页码数据
+        List<Work> rows2 = selectRows(begin, size, rows1);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition1(work);
         PageBean<Work> pageBean = new PageBean<>();
@@ -122,10 +126,11 @@ public class WorkServiceImpl implements WorkService {
         WorkMapper workMapper = sqlSession.getMapper(WorkMapper.class);
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
-        User user=new User();
+        User user = new User();
         user.setAccount(work.getAccount());
         User u = userMapper.selectUserByAccount(user);
-        if (u==null){
+        if (u == null) {
+            //没有该账号
             // 释放资源
             sqlSession.close();
             return "fail";
@@ -143,7 +148,7 @@ public class WorkServiceImpl implements WorkService {
     }
 
     //将公告信息排列
-    private List<Work> sortRows(List<Work> rows){
+    private List<Work> sortRows(List<Work> rows) {
         int n = rows.size();
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {

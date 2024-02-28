@@ -7,8 +7,6 @@ import com.turing.util.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import javax.servlet.http.HttpSession;
-import java.io.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +22,7 @@ public class UserServiceImpl implements UserService {
         //获取UserMapper
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
-        User u=mapper.selectUserByAccountAndPassword(user);
+        User u = mapper.selectUserByAccountAndPassword(user);
         //释放资源
         sqlSession.close();
         return u;
@@ -38,12 +36,13 @@ public class UserServiceImpl implements UserService {
         //获取UserMapper
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
-        User u=mapper.selectUserByAccount(user);
-        if (u==null){
+        User u = mapper.selectUserByAccount(user);
+        if (u == null) {
             user.setIsJob("在职");
-            if ("男".equals(user.getSex())){
+            //按性别设置头像
+            if ("男".equals(user.getSex())) {
                 user.setFace("img/male.png");
-            }else {
+            } else {
                 user.setFace("img/female.png");
             }
             mapper.insertUser(user);
@@ -65,20 +64,20 @@ public class UserServiceImpl implements UserService {
         SqlSession sqlSession = factory.openSession();
         //获取UserMapper
         LeaveMapper leaveMapper = sqlSession.getMapper(LeaveMapper.class);
-        UserMapper userMapper=sqlSession.getMapper(UserMapper.class);
-        ActivityMapper activityMapper=sqlSession.getMapper(ActivityMapper.class);
-        WorkMapper workMapper=sqlSession.getMapper(WorkMapper.class);
-        SalaryMapper salaryMapper=sqlSession.getMapper(SalaryMapper.class);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        ActivityMapper activityMapper = sqlSession.getMapper(ActivityMapper.class);
+        WorkMapper workMapper = sqlSession.getMapper(WorkMapper.class);
+        SalaryMapper salaryMapper = sqlSession.getMapper(SalaryMapper.class);
         //调用mapper
         //删除work
-        Work work=new Work();
+        Work work = new Work();
         work.setUserId(user.getId());
         workMapper.deleteWorkByUserId(work);
         //删除activityData
-        Activity activity=new Activity();
+        Activity activity = new Activity();
         activity.setUserId(user.getId());
         List<Activity> activityDatas = activityMapper.selectActivityDataByUserId(activity);
-        if (!activityDatas.isEmpty()){
+        if (!activityDatas.isEmpty()) {
             //更新number
             for (Activity activityData : activityDatas) {
                 activityMapper.updateNumberByActivityId(activityData);
@@ -86,7 +85,7 @@ public class UserServiceImpl implements UserService {
         }
         activityMapper.deleteActivityDataByUserId(activity);
         //删除leave
-        Leave leave=new Leave();
+        Leave leave = new Leave();
         leave.setUserId(user.getId());
         leaveMapper.deleteByUserId(leave);
         //删除salary
@@ -109,31 +108,31 @@ public class UserServiceImpl implements UserService {
         //获取UserMapper
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
-        User user1=userMapper.selectUserByAccount(user);
-        if (user1!=null&&!Objects.equals(user1.getId(), user.getId())){
+        User user1 = userMapper.selectUserByAccount(user);
+        if (user1 != null && !Objects.equals(user1.getId(), user.getId())) {
             //账号已存在
             // 释放资源
             sqlSession.close();
             return "fail";
         }
         User user2 = userMapper.selectUserById(user);
-        String urlData=user.getFace();
-        if ("img/female.png".equals(urlData)){
+        String urlData = user.getFace();
+        if ("img/female.png".equals(urlData)) {
             //没换头像，为女
-            if ("男".equals(user.getSex())){
+            if ("男".equals(user.getSex())) {
                 //换性别了
                 user2.setSex("男");
                 user2.setFace("img/male.png");
             }
-        }else if ("img/male.png".equals(urlData)){
-            if ("女".equals(user.getSex())){
+        } else if ("img/male.png".equals(urlData)) {
+            if ("女".equals(user.getSex())) {
                 user2.setSex("女");
                 user2.setFace("img/female.png");
             }
-        }else {
-            user2.setFace("img/"+user.getId()+".jpg");
+        } else {
+            user2.setFace("img/" + user.getId() + ".jpg");
         }
-        if (user.getAccount()!=null&&!user.getAccount().isEmpty()){
+        if (user.getAccount() != null && !user.getAccount().isEmpty()) {
             user2.setAccount(user.getAccount());
             user2.setBasicSalary(user.getBasicSalary());
         }
@@ -142,15 +141,15 @@ public class UserServiceImpl implements UserService {
         userMapper.updateUserById(user2);
         //获取ActivityMapper
         ActivityMapper activityMapper = sqlSession.getMapper(ActivityMapper.class);
-        Activity activity=new Activity();
+        Activity activity = new Activity();
         activity.setUserId(user2.getId());
         activity.setUserName(user2.getName());
         activity.setFace(user2.getFace());
         activity.setAccount(user2.getAccount());
         activityMapper.updateActivityDataByUserId(activity);
         //获取LeaveMapper
-        LeaveMapper leaveMapper=sqlSession.getMapper(LeaveMapper.class);
-        Leave leave=new Leave();
+        LeaveMapper leaveMapper = sqlSession.getMapper(LeaveMapper.class);
+        Leave leave = new Leave();
         leave.setUserId(user2.getId());
         leave.setName(user2.getName());
         leave.setAccount(user2.getAccount());
@@ -158,8 +157,8 @@ public class UserServiceImpl implements UserService {
         leave.setFace(user2.getFace());
         leaveMapper.updateLeaveByUserId(leave);
         //获取WorkMapper
-        WorkMapper workMapper=sqlSession.getMapper(WorkMapper.class);
-        Work work=new Work();
+        WorkMapper workMapper = sqlSession.getMapper(WorkMapper.class);
+        Work work = new Work();
         work.setName(user2.getName());
         work.setFace(user2.getFace());
         work.setSex(user2.getSex());
@@ -182,7 +181,7 @@ public class UserServiceImpl implements UserService {
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         //调用mapper
         User user1 = mapper.selectUserById(user);
-        if (!Objects.equals(user1.getPassword(), user.getAccount())){
+        if (!Objects.equals(user1.getPassword(), user.getAccount())) {
             //密码错误
             // 释放资源
             sqlSession.close();
@@ -199,27 +198,27 @@ public class UserServiceImpl implements UserService {
 
     //分页条件查询（当前页码，每页展示条数）
     @Override
-    public PageBean<User> selectByPageAndCondition(int currentPage, int pageSize,User user) {
+    public PageBean<User> selectByPageAndCondition(int currentPage, int pageSize, User user) {
         //获取SqlSession对象
         SqlSession sqlSession = factory.openSession();
         //获取UserMapper
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //处理模糊表达式
         String account = user.getAccount();
         if (account != null && !account.isEmpty()) {
             user.setAccount("%" + account + "%");
         }
         String name = user.getName();
-        if (name!= null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             user.setName("%" + name + "%");
         }
         //调用mapper
         //当前页数据
-        List<User> rows = mapper.selectByPageAndCondition(begin,size,user);
+        List<User> rows = mapper.selectByPageAndCondition(begin, size, user);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition(user);
         PageBean<User> pageBean = new PageBean<>();
@@ -232,27 +231,27 @@ public class UserServiceImpl implements UserService {
 
     //分页条件查询离职（当前页码，每页展示条数）
     @Override
-    public PageBean<User> selectByPageAndCondition2(int currentPage, int pageSize,User user) {
+    public PageBean<User> selectByPageAndCondition2(int currentPage, int pageSize, User user) {
         //获取SqlSession对象
         SqlSession sqlSession = factory.openSession();
         //获取UserMapper
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         //计算开始索引
-        int begin=(currentPage-1)*pageSize;
+        int begin = (currentPage - 1) * pageSize;
         //计算查询条数
-        int size=pageSize;
+        int size = pageSize;
         //处理模糊表达式
         String account = user.getAccount();
         if (account != null && !account.isEmpty()) {
             user.setAccount("%" + account + "%");
         }
         String name = user.getName();
-        if (name!= null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             user.setName("%" + name + "%");
         }
         //调用mapper
         //当前页数据
-        List<User> rows = mapper.selectByPageAndCondition2(begin,size,user);
+        List<User> rows = mapper.selectByPageAndCondition2(begin, size, user);
         //查询总记录数
         int totalCount = mapper.selectTotalCountAndCondition2(user);
         PageBean<User> pageBean = new PageBean<>();

@@ -1,7 +1,5 @@
 package com.turing.web.servlet;
 
-
-
 import com.alibaba.fastjson.JSON;
 import com.turing.pojo.Leave;
 import com.turing.pojo.PageBean;
@@ -19,21 +17,21 @@ import java.util.List;
 
 @WebServlet("/leave/*")
 public class LeaveServlet extends BaseServlet {
-    private final LeaveService leaveService=new LeaveServiceImpl();
+    private final LeaveService leaveService = new LeaveServiceImpl();
 
     //分页条件查询在职用户请假信息
     public void selectByPageAndCondition(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String currentPage_ = request.getParameter("currentPage");
         String pageSize_ = request.getParameter("pageSize");
         int currentPage = Integer.parseInt(currentPage_);
-        int pageSize=Integer.parseInt(pageSize_);
+        int pageSize = Integer.parseInt(pageSize_);
         //接收json字符串数据
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
-        PageBean<Leave> pageBean = leaveService.selectByPageAndCondition(currentPage,pageSize,leave);
+        PageBean<Leave> pageBean = leaveService.selectByPageAndCondition(currentPage, pageSize, leave);
         //转为JSON
         String jsonString = JSON.toJSONString(pageBean);
         //写数据
@@ -46,18 +44,18 @@ public class LeaveServlet extends BaseServlet {
         String currentPage_ = request.getParameter("currentPage");
         String pageSize_ = request.getParameter("pageSize");
         int currentPage = Integer.parseInt(currentPage_);
-        int pageSize=Integer.parseInt(pageSize_);
+        int pageSize = Integer.parseInt(pageSize_);
         //接收json字符串数据
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //获取session
-        HttpSession session=request.getSession();
+        HttpSession session = request.getSession();
         int id = (int) session.getAttribute("userId");
         leave.setUserId(id);
         //调用Service
-        PageBean<Leave> pageBean = leaveService.selectByPageAndCondition1(currentPage,pageSize,leave);
+        PageBean<Leave> pageBean = leaveService.selectByPageAndCondition1(currentPage, pageSize, leave);
         //转为JSON
         String jsonString = JSON.toJSONString(pageBean);
         //写数据
@@ -71,7 +69,7 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
         leaveService.updateLeave(leave);
         //写数据
@@ -84,7 +82,7 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
         leaveService.deleteLeave(leave);
         //写数据
@@ -119,8 +117,8 @@ public class LeaveServlet extends BaseServlet {
         Leave leave = new Leave();
         leave.setState(params);
         //获取session
-        HttpSession session=request.getSession();
-        int id= (int) session.getAttribute("userId");
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("userId");
         leave.setUserId(id);
         //调用Service
         List<Leave> leaves = leaveService.selectApplyLeaveByUserId(leave);
@@ -137,7 +135,7 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
         leaveService.updateApplyYes(leave);
         //写数据
@@ -150,7 +148,7 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
         leaveService.updateApplyNo(leave);
         //写数据
@@ -163,7 +161,7 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //调用Service
         leaveService.depart(leave);
         //写数据
@@ -176,10 +174,10 @@ public class LeaveServlet extends BaseServlet {
         BufferedReader br = request.getReader();
         String params = br.readLine();
         //转为Leave对象
-        Leave leave= JSON.parseObject(params, Leave.class);
+        Leave leave = JSON.parseObject(params, Leave.class);
         //获取session
-        HttpSession session=request.getSession();
-        int id= (int) session.getAttribute("userId");
+        HttpSession session = request.getSession();
+        int id = (int) session.getAttribute("userId");
         leave.setUserId(id);
         //调用Service
         leaveService.addLeave(leave);

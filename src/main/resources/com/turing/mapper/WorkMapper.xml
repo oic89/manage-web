@@ -5,7 +5,7 @@
 
 
 <!--接口全限定名-->
-<mapper namespace="com.turing.mapper.WorkMapper" >
+<mapper namespace="com.turing.mapper.WorkMapper">
     <!--映射设置(表名和类名不一致时)-->
     <resultMap id="workResultMap" type="work">
         <result column="user_id" property="userId"/>
@@ -30,21 +30,21 @@
     </select>
 
     <!--条件查询在职用户出勤信息总页数-->
-    <select id="selectTotalCountAndCondition" resultType="int" >
+    <select id="selectTotalCountAndCondition" resultType="int">
         select count(*) from tb_work
 
         <where>
-        <if test="name!=null and name!='' ">
-            and name like #{name}
-        </if>
+            <if test="name!=null and name!='' ">
+                and name like #{name}
+            </if>
 
-        <if test="date!=null and date!=''">
-            and date like #{date}
-        </if>
+            <if test="date!=null and date!=''">
+                and date like #{date}
+            </if>
 
-        <if test="type!=null and type!=''">
-            and type=#{type}
-        </if>
+            <if test="type!=null and type!=''">
+                and type=#{type}
+            </if>
         </where>
     </select>
 
@@ -63,17 +63,17 @@
     </select>
 
     <!--条件查询登录用户出勤总页数-->
-    <select id="selectTotalCountAndCondition1" resultType="int" >
+    <select id="selectTotalCountAndCondition1" resultType="int">
         select count(*) from tb_work
         where user_id=#{userId}
 
-            <if test="date!=null and date!=''">
-                and date like #{date}
-            </if>
+        <if test="date!=null and date!=''">
+            and date like #{date}
+        </if>
 
-            <if test="type!=null and type!=''">
-                and type=#{type}
-            </if>
+        <if test="type!=null and type!=''">
+            and type=#{type}
+        </if>
     </select>
 
 </mapper>
