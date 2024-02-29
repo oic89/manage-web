@@ -9,4 +9,8 @@
         <listener-class>com.turing.web.listener.ContextLoadListener</listener-class>
     </listener>
 
+    <!--延长session时间(30天)-->
+    <session-config>
+        <session-timeout>43200</session-timeout>
+    </session-config>
 </web-app>

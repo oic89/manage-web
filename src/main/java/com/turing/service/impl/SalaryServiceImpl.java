@@ -141,7 +141,7 @@ public class SalaryServiceImpl implements SalaryService {
             //迟到、早退两次算请假一天，迟到早退一次扣10
             //缺勤一次扣50，缺勤没有全勤奖
             int salary = user.getBasicSalary() - (leaveEarlyTime + lateTime) * 10 - absenceTime * 50;
-            if (leaveTime + (leaveEarlyTime + lateTime) / 2 < 1 && absenceTime == 0) {
+            if (leaveTime + (leaveEarlyTime + lateTime) / 2 <= 1 && absenceTime == 0) {
                 salary += 500;
             } else if (leaveTime + (leaveEarlyTime + lateTime) / 2 == 2 && absenceTime == 0) {
                 salary += 250;
