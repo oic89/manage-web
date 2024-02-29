@@ -1,0 +1,7 @@
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:34 +0800] "GET /manage HTTP/1.1" 302 - http-bio-8080-exec-1 0
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:34 +0800] "GET /manage/ HTTP/1.1" 304 - http-bio-8080-exec-3 17
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:34 +0800] "GET /favicon.ico HTTP/1.1" 404 - http-bio-8080-exec-4 0
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:42 +0800] "POST /manage/admin/login HTTP/1.1" 200 30 http-bio-8080-exec-5 760
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:42 +0800] "GET /manage/aEmployeeInformation.html HTTP/1.1" 200 41335 http-bio-8080-exec-6 7
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:43 +0800] "POST /manage/admin/loadData HTTP/1.1" 200 73 http-bio-8080-exec-7 7
+0:0:0:0:0:0:0:1 - - [29/Feb/2024:12:48:43 +0800] "POST /manage/user/selectByPageAndCondition?currentPage=1&pageSize=5 HTTP/1.1" 200 722 http-bio-8080-exec-2 67
