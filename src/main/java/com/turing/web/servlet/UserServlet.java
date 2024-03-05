@@ -180,6 +180,11 @@ public class UserServlet extends BaseServlet {
         user.setId(id);
         //调用Service
         String result = userService.modifyPassword(user);
+        if("success".equals(result)){
+            HttpSession session = request.getSession();
+            //删除session
+            session.invalidate();
+        }
         //写数据
         response.getWriter().write(result);
     }

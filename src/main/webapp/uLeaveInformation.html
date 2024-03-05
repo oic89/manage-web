@@ -640,8 +640,11 @@
                                 this.showModifyMessage=false;
                                 this.$message({
                                     type: 'success',
-                                    message: '修改成功!'
+                                    message: '修改成功,请重新登录!'
                                 });
+                                setTimeout(() => {
+                                    location.href="http://localhost:8080/manage/login.html";
+                                }, 500);
                                 return;
                             }
                             this.$message({

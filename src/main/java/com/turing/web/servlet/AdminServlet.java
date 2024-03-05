@@ -138,6 +138,12 @@ public class AdminServlet extends BaseServlet {
         admin.setId(id);
         //调用Service
         String result = adminService.modifyPassword(admin);
+        if("success".equals(result)){
+            //获取Session
+            HttpSession session = request.getSession();
+            //删除session
+            session.invalidate();
+        }
         response.getWriter().write(result);
     }
 
